@@ -12,7 +12,7 @@ for i in `seq 1 ${2}`
 do
     cd run$i
     echo ""
-    if [[ ! -f md.gro ]]; then echo "Cannot locate md.gro file for run${i} - please run the simulation!"; exit 0; fi
+    if [[ ! -f md*.gro ]]; then echo "Cannot locate md*.gro file for run${i} - please run the simulation until completion!"; exit 0; fi
     echo "Processing replicate: ${i}"
     mkdir -p output_files
     if [ -f md.part0001.xtc ]; then gmx trjcat -f md.part*.xtc -o md.xtc; fi
