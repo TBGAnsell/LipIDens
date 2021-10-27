@@ -74,8 +74,8 @@ lipid_atoms = None # all lipid atom/bead will be considered
 contact_frames = 30  # will only plot data if the contact was formed over ${contact_frames} frames.
 distance_threshold = 0.65
 
-lower_cutoff = [0.4, 0.425, 0.45, 0.475, 0.5, 0.55] # list of lower cutoffs to test in exhastive search
-upper_cutoff = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9] # list of upper cutoffs to test in axhastive search
+lower_cutoff = [0.4, 0.425, 0.45, 0.475, 0.5, 0.55] # list of lower cutoffs to test in exhasutive search
+upper_cutoff = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9] # list of upper cutoffs to test in exhaustive search
 timeunit = "us"
 
 ##################
