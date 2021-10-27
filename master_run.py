@@ -60,6 +60,7 @@ ps.fetch_CG_itp(forcefield, path)
 bilayer=ps.bilayer_select(membrane_composition)
 ps.top_header(forcefield, path)
 ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time)
+### PAUSE POINT - run CG trajectories ###
 
 ## Process CG trajectories ###
 ps.trjconv_CG(protocol_path, stride, replicates, path)
