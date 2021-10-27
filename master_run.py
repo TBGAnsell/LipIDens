@@ -112,6 +112,7 @@ for lipid in lip_list:
 ### Selecting PyLipID input parameters  ###
 cutoffs = [0.5, 0.7]  # dual-cutoff scheme for coarse-grained simulations. Single-cutoff scheme can be
                       # achieved by using the same value for two cutoffs.
+lipid_atoms = None # all lipid atom/bead will be considered
 dt_traj = None  # the timestep of trajectories. Need to use this param when trajectories are in a format
                 # with no timestep information. Not necessary for trajectory formats of e.g. xtc, trr.
 
