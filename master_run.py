@@ -81,7 +81,7 @@ timeunit = "us"
 ##################
 ### Code Below ###
 ##################
-### Selecting PyLipID input parameters ###
+### Testing PyLipID cut-offs  ###
 traj=lip_test.load_traj(path)
 lip_list=lip_test.get_lipids(bilayer) 
 for lipid in lip_list:
@@ -109,6 +109,7 @@ for lipid in lip_list:
 #################
 
 ### Section 3: USER DEFINED VARIABLES ###
+### Selecting PyLipID input parameters  ###
 cutoffs = [0.5, 0.7]  # dual-cutoff scheme for coarse-grained simulations. Single-cutoff scheme can be
                       # achieved by using the same value for two cutoffs.
 dt_traj = None  # the timestep of trajectories. Need to use this param when trajectories are in a format
