@@ -71,7 +71,7 @@ ps.trjconv_CG(protocol_path, stride, replicates, path)
 
 ### Section 2: USER DEFINED VARIABLES ###
 lipid_atoms = None # all lipid atom/bead will be considered
-contact_frames = 30  # will only plot data if the contact was formed over ${contact_frames} frames.
+contact_frames = 30  # will only plot data if the contact was formed over X number of frames where X=contact_frames.
 distance_threshold = 0.65
 
 lower_cutoff = [0.4, 0.425, 0.45, 0.475, 0.5, 0.55] # list of lower cutoffs to test in exhasutive search
@@ -83,7 +83,7 @@ timeunit = "us"
 ##################
 ### Selecting PyLipID input parameters ###
 traj=lip_test.load_traj(path)
-lip_list=lip_test.get_lipids(bilayer) ### Make None default - and also for save_dir (add as bilayer=None in function??/ check pylipid)
+lip_list=lip_test.get_lipids(bilayer) 
 for lipid in lip_list:
     print(lipid)
     fig_dir=lip_test.set_lipid(path, lipid)
