@@ -175,6 +175,7 @@ for lipid in lip_list:
 #################
 
 ### Section 5: ###
+### Comparing lipid poses with cryo-EM densities ###
 ### Rank sites ###
 
 ### Section 6 - User defined variables ###
