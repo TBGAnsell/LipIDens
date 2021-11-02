@@ -198,3 +198,6 @@ AT_simulation_time=100 #time in ns
 ps.CG2AT(protocol_path, protein_AT_full, input_CG_frame, save_dir)
 AT_path=ps.system_setup_AT(protocol_path, path, model_type)
 ps.run_AT(AT_path, replicates_AT, protocol_path, AT_simulation_time)
+
+### PAUSE POINT - run AT trajectories ###
+
