@@ -186,7 +186,7 @@ XXX
 
 ### Section 6: USER DEFINED VARIABLES ###
 ### Lipid pose refinement using atomistic simulation ###
-input_CG_frame="md_fit_firstframe.gro"
+input_CG_frame="md_fit_lastframe.gro"
 model_type="de_novo" #option to specify whether to use 'aligned' or 'de_novo' structure from CG2AT for input of the AT simulations
 replicates_AT=1
 AT_simulation_time=100 #time in ns
