@@ -174,11 +174,18 @@ for lipid in lip_list:
 #################
 #################
 
-### Section 5: ###
-### Comparing lipid poses with cryo-EM densities ###
-### Rank sites ###
+### Section 5: USER DEFINED VARIABLES ###
+### Ranking site lipids ###
+BindingSite_ID_dict={"POPC": [0, 2 ,5 1],
+           "POPE": [2, 3, 6, 1]}
 
-### Section 6 - User defined variables ###
+##################
+### Code Below ###
+##################
+XXX
+
+### Section 6: USER DEFINED VARIABLES ###
+### Lipid pose refinement using atomistic simulation ###
 input_CG_frame="md_fit_firstframe.gro"
 model_type="de_novo" #option to specify whether to use 'aligned' or 'de_novo' structure from CG2AT for input of the AT simulations
 replicates_AT=1
