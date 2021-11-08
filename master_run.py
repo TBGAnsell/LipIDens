@@ -8,6 +8,7 @@ import protocol.simulation as ps
 import protocol.test_PyLipID_cutoffs as lip_test
 import protocol.run_PyLipID as lip_run
 import protocol.screen_PyLipID_data as lip_screen
+import protocol.rank_sites as rs
 
 """
 Master script for step wise implementation of the protocol.
@@ -177,12 +178,18 @@ for lipid in lip_list:
 ### Section 5: USER DEFINED VARIABLES ###
 ### Ranking site lipids ###
 BindingSite_ID_dict={"POPC": [0, 2 ,5 1],
-           "POPE": [2, 3, 6, 1]}
+           "POPE": [2, 3, 6, 1],
+           "CHOL":["X", 3, 5, "X"]}
 
 ##################
 ### Code Below ###
 ##################
-XXX
+rank_data=rs.get_BSstat(path, BindingSite_ID_dict)
+rs.plot_site_rank(path, indingSite_ID_dict, rank_data) 
+
+#################
+#################
+#################
 
 ### Section 6: USER DEFINED VARIABLES ###
 ### Lipid pose refinement using atomistic simulation ###
