@@ -17,13 +17,14 @@ def get_data(path, lipid):
     ### Load the basic data ###
     # All data #
     try:
+        print("\nObtaining PyLipID outputs for screening:", lipid, "\n")
         interactions_csv=pd.read_csv("{}/Interaction_{}/Dataset_{}/Dataset.csv".format(path, lipid, lipid))
         interactions_csv=interactions_csv.filter(regex='Bind', axis=1).drop_duplicates()
         interactions_csv=interactions_csv[interactions_csv["Binding Site ID"] >=0]
         # Store and load summary of binding site data #
         interactions_csv.to_csv("{}/Interaction_{}/BS_summary_{}.csv".format(path, lipid, lipid), index=False)
         data=pd.read_csv("{}/Interaction_{}/BS_summary_{}.csv".format(path,lipid,lipid), delimiter=",")
-        print(data)
+        print("Binding site data:\n", "{}/Interaction_{}/BS_summary_{}.csv".format(path,lipid,lipid))
     except Exception as e:
         print("PyLipID Data (Dataset.csv) not found for {} - check PyLipID run was successful".format(lipid))
         print(e)
@@ -62,4 +63,5 @@ def plot_screen_data(data, path, lipid):
     #plt.show()
     plt.savefig("{}/Interaction_{}/Site_stats_rank_compare.pdf".format(path, lipid), format='pdf')
     plt.close()
+    print("Ranked comparison of binding sites complete:", "{}/Interaction_{}/Site_stats_rank_compare.pdf".format(path, lipid), "\n")
     return
