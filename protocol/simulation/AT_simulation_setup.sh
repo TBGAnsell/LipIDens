@@ -26,14 +26,15 @@ do
     cp ../*.pdb system.pdb
 
     all_mols=`sed -ne '/molecules/,$ p' *.top | grep "^[^#;[]" | sort -u | awk '{print $1}' | grep -v '^..$'`
+    echo $all_mols
 
-    rem=( 'PROT' 'Prot' 'prot' 'SOL' 'Sol' 'sol' 'ION' 'Ion' 'ion' 'WAT' 'Wat' 'wat' )
+    rem=( 'PROT' 'Prot' 'prot' 'SOL' 'Sol' 'sol' 'ION' 'Ion' 'ion' 'WAT' 'Wat' 'wat' 'SPC' 'TIP' )
 
     for i in "${rem[@]}"
     do
       all_mols="$( echo "$all_mols" | sed -e "s/${i}.*//g" )"
     done
-    echo "Lipids: ${all_mols}"
+
     lip_list=`echo $all_mols | tr " " "\n" | perl -ne 'print "r${_}*|"' | awk '{print}' ORS=''`
 
 
