@@ -126,6 +126,7 @@ def test_cutoffs(cutoff_list, trajfile_list, topfile_list, lipid, lipid_atoms, n
     duration_avgs = {}
     num_of_contacting_residues = {}
     for cutoffs in cutoff_list:
+        print("\n Testing cutoff pair:", cutoffs, "\n")
         li = LipidInteraction(trajfile_list, topfile_list=topfile_list, cutoffs=cutoffs, lipid=lipid,
                               lipid_atoms=lipid_atoms, nprot=1, timeunit=timeunit,
                               save_dir=save_dir, stride=stride)
@@ -144,9 +145,9 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
     Obtain list of cutoff pairs to use for exhastive cutoff testing using user specified lower and upper cutoff lists.
     Load all coarse-grain trajectories to test.
     """
-    print("\nInitiating exhastive cutoff search:")
+    print("\nInitiating exhastive cutoff search:\n")
     print("Lower cutoffs to test:", lower_cutoff)
-    print("Upper cutoffs to test:", upper_cutoff)
+    print("Upper cutoffs to test:", upper_cutoff, "\n")
     cutoff_list = list(product(lower_cutoff, upper_cutoff))
     trajfile_list=[]
     topfile_list=[]
@@ -161,7 +162,7 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
             print("Cannot find skipped trajectory located at {}/run{}/md_stride.xtc - have you processed the trajectories?".format(path, n))
             exit()
 
-    print("List of trajectories to test:", trajfile_list)
+    print("List of trajectories to test:", trajfile_list, "\n")
     return cutoff_list, trajfile_list, topfile_list
 
 def ex_data_process(path, lipid, num_of_binding_sites, duration_avgs, num_of_contacting_residues, cutoff_list):
