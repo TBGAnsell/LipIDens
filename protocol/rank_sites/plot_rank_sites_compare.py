@@ -18,14 +18,14 @@ def get_BSstat(path, site_dict):
     Load binding site data for lipid sites in site_dict.
     """
     os.makedirs(os.path.join(path, "Lipid_compare"), exist_ok=True)
-
     data=pd.DataFrame()
     for lipid in site_dict:
         try:
             print(lipid)
             interactions_csv=pd.read_csv("{}/Interaction_{}/Dataset_{}/Dataset.csv".format(path, lipid, lipid))
             for idx, site in enumerate(site_dict[lipid]):
-                if site != "X":
+                print(site)
+                if isinstance(site, int):
                     site_csv=interactions_csv[interactions_csv["Binding Site ID"] == site]
                     site_csv["koff_diff"]=site_csv["Binding Site Koff"] - site_csv["Binding Site Koff Bootstrap avg"]
 
@@ -44,6 +44,9 @@ def get_BSstat(path, site_dict):
                     "BS R squared": 0,
                     "BS Residence Time": 0,
                     "BS Occupancy": 0})
+                else:
+                    print("Binding Site ID {} not recognised. Should be an integer or string 'X' for null site".format(site))
+                    exit()
                 data=data.append(df, ignore_index=True)
         except Exception as e:
             print(e)
@@ -78,4 +81,5 @@ def plot_site_rank(path, site_dict, data):
         #plt.show()
         plt.savefig("{}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx_{}.pdf".format(path, i), format='pdf')
         plt.close()
+    print("\nSite comparison complete:", "{}/Lipid_compare".format(path))
     return
