@@ -3,7 +3,7 @@
 LipIDens is a pipeline for simulation assisted interpretation of lipid or lipid-like densities in e.g. cryogenic electron microscopy (cryo-EM) structures of membrane proteins. The protocol can be used to establish CG simulations, analyse lipid binding sites using PyLipID, screen, rank and process PyLipID outputs and establish atomistic simulations to refine lipid binding poses.
 
 # Applications:
-- Differentiating between sterol and phospholipid binding sites where densities are ambiguous. 
+- Differentiating between sterol and phospholipid binding sites where structural densities are ambiguous. 
 - Assess preferential binding of different lipid types to a site where lipid-like density is observed.
 - Evaluate whether lipid tail densities are likely to belong to the same or adjacent binding sites. 
 - Quantify the kinetics of different lipids binding to the same site.
