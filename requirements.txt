@@ -1,0 +1,16 @@
+kneebow
+logomaker
+matplotlib>=3.3.4
+mdtraj
+networkx
+numpy
+p-tqdm
+pandas
+pylipid>=1.5.14
+python-louvain
+scikit-learn
+scipy
+seaborn
+statsmodels
+tqdm
+vermouth>=0.7.2
