@@ -14,6 +14,13 @@ LipIDens is a pipeline for simulation assisted interpretation of lipid or lipid-
 # Installation:
 
 
+# Usage
+
+Detailed steps for the usage and implementation of LidIDens are provided within the accompanying protocols manuscript (see citation below). 
+
+In addition, a jupyter notebook tutorial is provided to assist implementation. 
+
+LipIDens can also be run using the standalone master_run.py script.  
 
 
 # Citation:
