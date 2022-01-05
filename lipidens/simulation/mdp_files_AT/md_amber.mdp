@@ -1,0 +1,47 @@
+integrator	= md		
+dt		    = 0.002		; 2 fs
+nsteps		= XXX 
+
+nstxout     = 150000        
+nstvout     = 150000        
+nstxtcout   = 10000    
+nstenergy   = 150000    
+nstlog      = 15000     
+
+continuation	= yes		    
+constraint_algorithm = lincs	
+constraints	= all-bonds	        ; all-bonds for amber
+lincs_iter	= 1		            
+lincs_order	= 4		            
+
+cutoff-scheme            = Verlet ; use with charmm36
+ns_type		= grid		
+nstlist		= 5		    
+rlist		= 1.2		 
+rcoulomb	= 1.2		 
+rvdw		= 1.2		
+
+coulombtype	= PME		
+pme_order	= 4		    
+fourierspacing	= 0.16	
+
+tcoupl		= Nose-Hoover		    
+tc-grps		= Protein Lipids Solvent	
+tau_t		= 0.5	0.5	0.5	        
+ref_t		= 310 	310	310	        
+
+pcoupl		= Parrinello-Rahman	    
+pcoupltype	= semiisotropic		    
+tau_p		= 2.0			        
+ref_p		= 1.0	1.0		        
+compressibility = 4.5e-5	4.5e-5	
+
+pbc		    = xyz		
+
+DispCorr	= EnerPres
+
+gen_vel		= no		
+
+nstcomm         = 1
+comm-mode       = Linear
+comm-grps       = Protein_Lipids Solvent 
