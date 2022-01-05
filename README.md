@@ -13,6 +13,12 @@ LipIDens is a pipeline for simulation assisted interpretation of lipid or lipid-
 
 # Installation:
 
+pip install lipidens
+
+git clone XXX
+
+conda create -n LipIDens python=3.9
+pip install -r requirements.txt
 
 # Usage
 
