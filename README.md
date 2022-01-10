@@ -34,9 +34,9 @@ pip install -r requirements.txt
 
 Detailed steps for the usage and implementation of LidIDens are provided within the accompanying protocols manuscript (see citation below). 
 
-In addition, a jupyter notebook tutorial is provided to assist implementation. 
+In addition, a jupyter notebook tutorial is provided to assist implementation (`XXX-name`. 
 
-LipIDens can also be run using the standalone master_run.py script.  
+LipIDens can also be run using the standalone `master_run.py` script.  
 
 
 ## Citation:
