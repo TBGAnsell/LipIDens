@@ -21,7 +21,7 @@ pip install lipidens
 ```
 Alternativly LipIDens can be installed by direct download from the GitHub repository:
 ```bash
-git clone XXX
+git clone https://github.com/TBGAnsell/LipIDens
 cd LipIDens
 python setup.py install
 ```
