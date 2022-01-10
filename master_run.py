@@ -132,41 +132,41 @@ for lipid in lip_list:
 ### USER DEFINED VARIABLES #######################################################
 ##################################################################################
 cutoffs = [0.5, 0.7]  # dual-cutoff scheme for coarse-grained simulations. Single-cutoff scheme can be
-                      achieved by using the same value for two cutoffs.
+                      # achieved by using the same value for two cutoffs.
 lipid_atoms = None # all lipid atom/bead will be considered
 dt_traj = None  # the timestep of trajectories. Need to use this param when trajectories are in a format
-                with no timestep information. Not necessary for trajectory formats of e.g. xtc, trr.
+                # with no timestep information. Not necessary for trajectory formats of e.g. xtc, trr.
 
 binding_site_size = 4  # binding site should contain at least four residues.
 n_top_poses = 3     # write out num. of representative bound poses for each binding site.
 n_clusters = "auto"  # cluster the bound poses for a binding site into num. of clusters. PyLipID
-                     will write out a pose conformation for each of the cluster. By default, i.e.
-                     "auto", PyLipID will use a density based clusterer to find possible clusters.
+                    # will write out a pose conformation for each of the cluster. By default, i.e.
+                    # "auto", PyLipID will use a density based clusterer to find possible clusters.
 save_pose_format = "gro"  # format that poses are written in
 save_pose_traj = True  # save all the bound poses in a trajectory for each binding site. The generated
-                       trajectories can take some disk space (up to a couple GB depending on your system).
+                     #  trajectories can take some disk space (up to a couple GB depending on your system).
 save_pose_traj_format = "xtc"  # The format for the saved pose trajectories. Can take any format that is supported
-                               by mdtraj.
+                      #         by mdtraj.
 
 timeunit = "us"  # micro-sec. "ns" is nanosecond. Time unit used for reporting the results.
 resi_offset = 0  # shift the residue index, useful for MARTINI models.
 
 radii = None  # Radii of protein atoms/beads. In the format of python dictionary {atom_name: radius}
-              Used for calculation of binding site surface area. The van der waals radii of common atoms were
-              defined by mdtraj (https://github.com/mdtraj/mdtraj/blob/master/mdtraj/geometry/sasa.py#L56).
-              The radii of MARTINI 2.2 beads were included in PyLipID.
+             #  Used for calculation of binding site surface area. The van der waals radii of common atoms were
+             #  defined by mdtraj (https://github.com/mdtraj/mdtraj/blob/master/mdtraj/geometry/sasa.py#L56).
+             # The radii of MARTINI 2.2 beads were included in PyLipID.
 
 pdb_file_to_map = "TMD.pdb"   # if a pdb coordinate of the receptor is provided, a python script
-                         "show_binding_site_info.py" will be generated which maps the binding
-                         site information to the structure in PyMol. As PyMol cannot recognize
-                         coarse-grained structures, an atomistic structure of the receptor is needed.
+                        # "show_binding_site_info.py" will be generated which maps the binding
+                        # site information to the structure in PyMol. As PyMol cannot recognize
+                        # coarse-grained structures, an atomistic structure of the receptor is needed.
 
 fig_format = "pdf"  # format for all pylipid produced figures. Allow for formats that are supported by
-                    matplotlib.pyplot.savefig().
+                   # matplotlib.pyplot.savefig().
 
 num_cpus = None  # the number of cpu to use when functions are using multiprocessing. By default,
-                 i.e. None, the functions will use up all the cpus available. This can use up all the memory in
-                 some cases.
+                # i.e. None, the functions will use up all the cpus available. This can use up all the memory in
+                # some cases.
 
 #############################
 ### Section 3: CODE Below ###
