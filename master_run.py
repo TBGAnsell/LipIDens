@@ -39,7 +39,7 @@ Author: T. Bertie Ansell, Wanling Song
 ### Section 1:Setting up and performing CG simulations ###
 ### USER DEFINED VARIABLES ###############################
 ##########################################################
-protein_AT_full='TMD.pdb' # Atomistic .pdb file of protein. Protein residues should not have missing atoms however missing segments/loops are permitted.
+protein_AT_full='TMD.gro' # Atomistic .pdb file of protein. Protein residues should not have missing atoms however missing segments/loops are permitted.
 nprot = 1 # Number of homomeric protein chains, for heteromers use nprot=1
 protein_shift=0 # Shift protein position in membrane to align TM region within the bilayer (value can also be negative).
 protein_rotate='0 90 0' # Rotate the protein position to align TM region within the bilayer (angle in x y z)
@@ -71,7 +71,7 @@ protocol_path=os.path.dirname(lipidens.__file__)
 path=lipidens.system_setup.setup(protocol_path, save_dir)
 
 ### Structure processing ###
-protein_AT_full=pps.process_structure(protocol_path, protein_AT_full, protein_rotate)
+protein_AT_full=pps.process_structure(protocol_path, protein_AT_full, protein_rotate, path)
 
 ### Setting up and CG simulations ###
 python3_path, dssp_path, martinize2_path = ps.get_py_paths(protocol_path)
