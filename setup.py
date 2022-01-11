@@ -22,12 +22,12 @@ except Exception as e:
 
 import os
 
-def package_files(directory):
-    paths=[]
-    for (path, directories, filenames) in os.walk(directory):
-        for filesname in filenames:
-            paths.append(os.path.join('..', path, filesname))
-    return paths
+def get_files(direc):
+    fle_list=[]
+    for (path, _, fle_name) in os.walk(direc):
+        for f_n in fle_name:
+            fle_list.append(os.path.join('..', path, f_n))
+    return fle_list
 
 
 setup(
@@ -42,9 +42,9 @@ setup(
   long_description_content_type="text/markdown",
   packages=find_packages(),
   include_package_data=True,
-  package_data={"": package_files('lipidens')},
+  package_data={"": get_files('lipidens')},
   keywords = ['simulation', 'lipid', 'density', 'binding site'],
-  python_requires='>=3.6, <4, !=3.8*',
+  python_requires='>=3.9, <4',
   install_requires=['kneebow',
       'logomaker',
       'matplotlib>=3.3.4',
@@ -70,8 +70,6 @@ setup(
     'Topic :: Scientific/Engineering :: Medical Science Apps.',
     'Topic :: Scientific/Engineering :: Mathematics',
     'License :: OSI Approved :: MIT License',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.9',
   ],
 )
