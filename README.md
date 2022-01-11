@@ -33,9 +33,9 @@ pip install -r requirements.txt
 ```
 ## Usage
 
-Detailed steps for the usage and implementation of LidIDens are provided within the accompanying protocols manuscript (see citation below). 
+Detailed steps for the usage and implementation of LidIDens are provided within the accompanying protocols [manuscript]() (see citation below). 
 
-In addition, a jupyter notebook tutorial is provided to assist implementation (`XXX-name`). 
+In addition, a jupyter notebook tutorial is provided to assist implementation (`LipIDens_Protocol_jupyter_notebook_v1.ipynb`). 
 
 LipIDens can also be run using the standalone `master_run.py` script.  
 
