@@ -20,6 +20,15 @@ try:
 except Exception as e:
     raise RuntimeError("Unable to locate version string:", e)
 
+import os
+
+def package_files(directory):
+    paths=[]
+    for (path, directories, filenames) in os.walk(directory):
+        for filesname in filenames:
+            paths.append(os.path.join('..', path, filesname))
+    return paths
+
 
 setup(
   name = 'lipidens',
@@ -33,6 +42,7 @@ setup(
   long_description_content_type="text/markdown",
   packages=find_packages(),
   include_package_data=True,
+  package_data={"": package_files('lipidens')},
   keywords = ['simulation', 'lipid', 'density', 'binding site'],
   python_requires='>=3.6, <4, !=3.8*',
   install_requires=['kneebow',
