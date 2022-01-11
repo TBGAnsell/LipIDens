@@ -39,7 +39,7 @@ Author: T. Bertie Ansell, Wanling Song
 ### Section 1:Setting up and performing CG simulations ###
 ### USER DEFINED VARIABLES ###############################
 ##########################################################
-protein_AT_full='TMD.gro' # Atomistic .pdb file of protein. Protein residues should not have missing atoms however missing segments/loops are permitted.
+protein_AT_full='TMD.pdb' # Atomistic .pdb file of protein. Protein residues should not have missing atoms however missing segments/loops are permitted.
 nprot = 1 # Number of homomeric protein chains, for heteromers use nprot=1
 protein_shift=0 # Shift protein position in membrane to align TM region within the bilayer (value can also be negative).
 protein_rotate='0 90 0' # Rotate the protein position to align TM region within the bilayer (angle in x y z)
