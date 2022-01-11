@@ -118,6 +118,6 @@ dmypy.json
 cython_debug/
 
 # Other
-Test
+Test*
 *.pdb
 *.gro

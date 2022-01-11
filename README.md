@@ -15,15 +15,16 @@ LipIDens is a pipeline for simulation assisted interpretation of lipid or lipid-
 
 LipIDens requires a python3 environment (>=3.9 recommended). 
 
-LipIDens installation using pip (recommended):
-```bash
-pip install lipidens
-```
-Alternatively LipIDens can be installed by direct download from the GitHub repository:
+LipIDens installation from the GitHub repository:
 ```bash
 git clone https://github.com/TBGAnsell/LipIDens
 cd LipIDens
 python setup.py install
+```
+
+LipIDens installation using pip (pending):
+```bash
+pip install lipidens
 ```
 OLD:
 ```bash
