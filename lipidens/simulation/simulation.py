@@ -12,7 +12,6 @@ import zipfile
 ### Setup of CG simulations ###
 ###############################
 
-## Wrap all in CG simulation class
 def get_py_paths(protocol_path):
     """
     Establish python3 and dssp paths used as input for CG_simulation_setup.sh under run_CG(). Calls the bash script simulation/get_paths.sh.
@@ -52,7 +51,7 @@ def fetch_CG_itp(forcefield, path):
     else:
         print("Error with topology file download for the specified CG forcefield - please consider a different forcefield or download the required .itp files")
 
-# modify insane for correct lipid names - add LPS lipid e.g. LPS,  not all lipids in martini_v2 -make new master script?
+
 def bilayer_select(bilayer):
     """
     Select bilayer composition from either predefined selection (bilayer_type_dict) or inputted by the user in insane.py format.
@@ -104,7 +103,6 @@ def trjconv_CG(protocol_path, stride, replicates, path):
 ### Setup of AT simulations ###
 ###############################
 
-## Wrap all in AT simulation class
 def CG2AT(protocol_path, protein_AT_full, input_CG_frame, path):
     """
     Run CG2AT using atomsitic structure and provided frame from CG simulations.
@@ -112,7 +110,7 @@ def CG2AT(protocol_path, protein_AT_full, input_CG_frame, path):
     print("\nRunning CG2AT\n")
     subprocess.check_call(["{}/simulation/run_CG2AT.sh".format(protocol_path), protein_AT_full, input_CG_frame, path])
 
-# check opls mdp files
+
 def system_setup_AT(protocol_path, path, model_type):
     """
     Check whether CG2AT produced all files needed for AT simulations (.itp and .pdb). Establish directories and files needed for AT simulations.
