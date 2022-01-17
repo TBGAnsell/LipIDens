@@ -22,7 +22,7 @@ def get_BSstat(path, site_dict):
     for lipid in site_dict:
         try:
             print(lipid)
-            interactions_csv=pd.read_csv(f"{path}/Interaction_{lipid}/Dataset_{lipid}/Dataset.csv"))
+            interactions_csv=pd.read_csv(f"{path}/Interaction_{lipid}/Dataset_{lipid}/Dataset.csv")
             for idx, site in enumerate(site_dict[lipid]):
                 print(site)
                 if isinstance(site, int):
@@ -79,7 +79,7 @@ def plot_site_rank(path, site_dict, data):
         sns.despine(top=True, right=True)
         plt.tight_layout()
         #plt.show()
-        plt.savefig(f"{path}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx_{i}.pdf"), format='pdf')
+        plt.savefig(f"{path}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx_{i}.pdf", format='pdf')
         plt.close()
     print("\nSite comparison complete:", "{}/Lipid_compare".format(path))
     return

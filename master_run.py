@@ -33,6 +33,9 @@ Within each subsection the code can be decomposed into a list of USER DEFINED VA
 Author: T. Bertie Ansell, Wanling Song
 
 """
+### Establish paths to be used in protocol ###
+protocol_path=os.path.dirname(lipidens.__file__)
+path=lipidens.system_setup.setup(protocol_path, save_dir)
 
 ### Full mdp files - not shortened ###
 ##########################################################
@@ -67,9 +70,6 @@ n_cores=16 # Number of CPU to use to run gromacs mdrun commands
 #############################
 ### Section 1: CODE Below ###
 #############################
-protocol_path=os.path.dirname(lipidens.__file__)
-path=lipidens.system_setup.setup(protocol_path, save_dir)
-
 ### Structure processing ###
 protein_AT_full=pps.process_structure(protocol_path, protein_AT_full, protein_rotate, path)
 
