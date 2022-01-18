@@ -22,14 +22,17 @@ def setup(protocol_path, save_dir=None):
     return path
 
 def run_type():
-    steps_d={1: "Setup coarse-grained simulations",
-             2: "Process coarse-grained trajectories",
-             3: "Analyse simulations",
-             4: "Setup atomistic simulations"}
+    steps_d={"1a": "Setup coarse-grained simulations",
+             "1b": "Process coarse-grained trajectories",
+             "2": "Test PyLipID cut-off values",
+             "3": "Run PyLipID analysis",
+             "4": "Screen PyLipID data",
+             "5": "Rank site lipids",
+             "6": "Setup atomistic simulations"}
     print("\nInitialising LipIDens protocol\nProtocol steps:")
-    print(*[f"\n{key}: {val}\n" for key, val in steps_d.items()])
+    print(*[f"\n{key}: {val}" for key, val in steps_d.items()])
     try:
-        input_step=int(input("Select protocol stage number:"))
+        input_step=str(input("\nSelect protocol stage number:"))
         if input_step in steps_d:
             print("\nSelected:"+steps_d[input_step])
         else:

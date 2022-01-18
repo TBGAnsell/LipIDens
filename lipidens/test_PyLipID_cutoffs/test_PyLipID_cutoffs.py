@@ -30,6 +30,9 @@ def get_lipids(bilayer):
     """
     if bilayer !=None:
         lip_list=list(set(re.findall(r'\w[A-Z0-9]{2,}', bilayer)))
+    elif bilayer==None:
+        bilayer=str(input("Enter lipid names for analysis seperated by space e.g. POPC DOPC: "))
+        lip_list=list(set(re.findall(r'\w[A-Z0-9]{2,}', bilayer)))
     else:
         print("Bilayer not found, please define the bilayer composition")
         exit()
@@ -45,8 +48,9 @@ def load_traj(path):
         trajfile = "{}/run1/md_stride.xtc".format(path)
         topfile =  "{}/run1/md_stride_firstframe.gro".format(path)
         traj = md.load(trajfile, top=topfile)
-    except:
-        print("Cannot find skipped trajectory located at {}/run1/md_stride.xtc - have you processed the trajectories?".format(path))
+    except Exception as e:
+        print(e)
+        print("Have you processed the trajectories?".format(path))
         exit()
     return traj
 

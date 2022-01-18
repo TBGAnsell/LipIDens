@@ -75,13 +75,12 @@ input_step=lipidens.system_setup.run_type()
 ### Section 1: CODE Below ###
 #############################
 ### Structure processing ###
-if input_step==1:
+if input_step=="1a":
     protein_AT_full=pps.process_structure(protocol_path, protein_AT_full, protein_rotate, path)
+    bilayer=ps.bilayer_select(membrane_composition)
 
     ### Setting up and CG simulations ###
     python3_path, dssp_path, martinize2_path = ps.get_py_paths(protocol_path)
-    bilayer=ps.bilayer_select(membrane_composition)
-
     ps.system_setup(protocol_path, path)
     ps.fetch_CG_itp(forcefield, path)
     ps.top_header(forcefield, path)
@@ -91,7 +90,7 @@ if input_step==1:
 #############################################
 
 ### Process CG trajectories ###
-if input_step==2:
+if input_step=="1b":
     ps.trjconv_CG(protocol_path, stride, replicates, path)
 
 ################################################
@@ -110,9 +109,9 @@ timeunit = "us"
 ### Section 2: CODE Below ###
 #############################
 ### Testing PyLipID cut-offs  ###
-if input_step==3:
+if input_step=="2":
 
-    lip_list=lip_test.get_lipids(bilayer)
+    lip_list=lip_test.get_lipids(bilayer=None)
     traj=lip_test.load_traj(path)
     for lipid in lip_list:
         print("\n Testing:", lipid)
@@ -180,9 +179,11 @@ num_cpus = None  # the number of cpu to use when functions are using multiproces
 ### Section 3: CODE Below ###
 #############################
 ### Running PyLipID analysis ###
-trajfile_list, topfile_list=lip_run.get_trajectories(path, replicates)
-for lipid in lip_list:
-   lip_run.run_pylipid(trajfile_list, topfile_list, dt_traj, stride, lipid, lipid_atoms, cutoffs, nprot, binding_site_size,
+if input_step=="3":
+    trajfile_list, topfile_list=lip_run.get_trajectories(path, replicates)
+    lip_list=lip_test.get_lipids(bilayer=None)
+    for lipid in lip_list:
+        lip_run.run_pylipid(trajfile_list, topfile_list, dt_traj, stride, lipid, lipid_atoms, cutoffs, nprot, binding_site_size,
        n_top_poses, n_clusters, save_dir, save_pose_format, save_pose_traj, save_pose_traj_format, timeunit, resi_offset,
         radii, pdb_file_to_map, fig_format, num_cpus)
 
@@ -192,11 +193,12 @@ for lipid in lip_list:
 ### Section 4: CODE Below ###############
 #########################################
 ### Screen PyLipID data ###
-for lipid in lip_list:
-   data = lip_screen.get_data(path, lipid)
-   if data is not None:
-       lip_screen.plot_screen_data(data, path, lipid)
-
+if input_step=="4":
+    lip_list=lip_test.get_lipids(bilayer=None)
+    for lipid in lip_list:
+        data = lip_screen.get_data(path, lipid)
+        if data is not None:
+            lip_screen.plot_screen_data(data, path, lipid)
 
 ######################################
 ### Section 5: Ranking site lipids ###
@@ -210,8 +212,9 @@ BindingSite_ID_dict={"POPC": [1, 2 , 5, 3],     # Dictionary of lipids (keys) an
 ### Section 5: CODE Below ###
 #############################
 ### Ranking site lipids ###
-rank_data=rs.get_BSstat(path, BindingSite_ID_dict)
-rs.plot_site_rank(path, BindingSite_ID_dict, rank_data)
+if input_step=="5":
+    rank_data=rs.get_BSstat(path, BindingSite_ID_dict)
+    rs.plot_site_rank(path, BindingSite_ID_dict, rank_data)
 
 ###################################################
 ### Section 6: Setting up atomistic simulations ###
@@ -226,9 +229,10 @@ AT_simulation_time=100 # Time in ns
 ### Section 6: CODE Below ###
 #############################
 ### Setting up and running atomistic simulations ###
-ps.CG2AT(protocol_path, protein_AT_full, input_CG_frame, save_dir)
-AT_path=ps.system_setup_AT(protocol_path, path, model_type)
-ps.run_AT(AT_path, replicates_AT, protocol_path, AT_simulation_time)
+if input_step=="6":
+    ps.CG2AT(protocol_path, protein_AT_full, input_CG_frame, save_dir)
+    AT_path=ps.system_setup_AT(protocol_path, path, model_type)
+    ps.run_AT(AT_path, replicates_AT, protocol_path, AT_simulation_time)
 
 #############################################
 ### PAUSE POINT - run the AT trajectories ###
