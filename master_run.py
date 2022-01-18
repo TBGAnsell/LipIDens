@@ -33,10 +33,6 @@ Within each subsection the code can be decomposed into a list of USER DEFINED VA
 Author: T. Bertie Ansell, Wanling Song
 
 """
-### Establish paths to be used in protocol ###
-protocol_path=os.path.dirname(lipidens.__file__)
-path=lipidens.system_setup.setup(protocol_path, save_dir)
-
 ### Full mdp files - not shortened ###
 ##########################################################
 ### Section 1:Setting up and performing CG simulations ###
@@ -67,26 +63,36 @@ replicates=3 # number of CG replicates
 stride=10 # Skip every X no. frame during trajectory processing and running PyLipID
 n_cores=16 # Number of CPU to use to run gromacs mdrun commands
 
+##############################################
+### Establish paths to be used in protocol ###
+##############################################
+protocol_path=os.path.dirname(lipidens.__file__)
+path=lipidens.system_setup.setup(protocol_path, save_dir)
+input_step=lipidens.system_setup.run_type()
+
+
 #############################
 ### Section 1: CODE Below ###
 #############################
 ### Structure processing ###
-protein_AT_full=pps.process_structure(protocol_path, protein_AT_full, protein_rotate, path)
+if input_step==1:
+    protein_AT_full=pps.process_structure(protocol_path, protein_AT_full, protein_rotate, path)
 
-### Setting up and CG simulations ###
-python3_path, dssp_path, martinize2_path = ps.get_py_paths(protocol_path)
-bilayer=ps.bilayer_select(membrane_composition)
+    ### Setting up and CG simulations ###
+    python3_path, dssp_path, martinize2_path = ps.get_py_paths(protocol_path)
+    bilayer=ps.bilayer_select(membrane_composition)
 
-ps.system_setup(protocol_path, path)
-ps.fetch_CG_itp(forcefield, path)
-ps.top_header(forcefield, path)
-ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield)
+    ps.system_setup(protocol_path, path)
+    ps.fetch_CG_itp(forcefield, path)
+    ps.top_header(forcefield, path)
+    ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield)
 #############################################
 ### PAUSE POINT - run the CG trajectories ###
 #############################################
 
 ### Process CG trajectories ###
-ps.trjconv_CG(protocol_path, stride, replicates, path)
+if input_step==2:
+    ps.trjconv_CG(protocol_path, stride, replicates, path)
 
 ################################################
 ### Section 2:Testing PyLipID cut-off values ###
@@ -104,25 +110,27 @@ timeunit = "us"
 ### Section 2: CODE Below ###
 #############################
 ### Testing PyLipID cut-offs  ###
-lip_list=lip_test.get_lipids(bilayer)
-traj=lip_test.load_traj(path)
-for lipid in lip_list:
-   print("\n Testing:", lipid)
-   fig_dir=lip_test.set_lipid(path, lipid)
-   distance_set = lip_test.compute_minimum_distance(traj, lipid, fig_dir, 1, lipid_atoms=lipid_atoms,
-                                              contact_frames=contact_frames, distance_threshold=distance_threshold)
-   lip_test.plot_PDF(distance_set, 1000, "{}/PyLipID_cutoff_test_{}/dist_distribut_{}.pdf".format(path, lipid, lipid), lipid)
+if input_step==3:
 
-   cutoff_list, trajfile_list, topfile_list = lip_test.exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates)
-   num_of_binding_sites, duration_avgs, num_of_contacting_residues = lip_test.test_cutoffs(
+    lip_list=lip_test.get_lipids(bilayer)
+    traj=lip_test.load_traj(path)
+    for lipid in lip_list:
+        print("\n Testing:", lipid)
+        fig_dir=lip_test.set_lipid(path, lipid)
+        distance_set = lip_test.compute_minimum_distance(traj, lipid, fig_dir, 1, lipid_atoms=lipid_atoms,
+                                              contact_frames=contact_frames, distance_threshold=distance_threshold)
+        lip_test.plot_PDF(distance_set, 1000, "{}/PyLipID_cutoff_test_{}/dist_distribut_{}.pdf".format(path, lipid, lipid), lipid)
+
+        cutoff_list, trajfile_list, topfile_list = lip_test.exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates)
+        num_of_binding_sites, duration_avgs, num_of_contacting_residues = lip_test.test_cutoffs(
                                     cutoff_list, trajfile_list, topfile_list, lipid, lipid_atoms,
                                     nprot=nprot, stride=stride, save_dir="{}/PyLipID_cutoff_test_{}".format(path, lipid), timeunit=timeunit)
-   lip_test.ex_data_process(path, lipid, num_of_binding_sites, duration_avgs, num_of_contacting_residues, cutoff_list)
-   lip_test.graph(cutoff_list, [num_of_binding_sites[cutoffs] for cutoffs in cutoff_list],
+        lip_test.ex_data_process(path, lipid, num_of_binding_sites, duration_avgs, num_of_contacting_residues, cutoff_list)
+        lip_test.graph(cutoff_list, [num_of_binding_sites[cutoffs] for cutoffs in cutoff_list],
          "num. of binding sites", lipid, f"{path}/PyLipID_cutoff_test_{lipid}/test_cutoff_num_of_bs_{lipid}.pdf")
-   lip_test.graph(cutoff_list, [duration_avgs[cutoffs] for cutoffs in cutoff_list],
+        lip_test.graph(cutoff_list, [duration_avgs[cutoffs] for cutoffs in cutoff_list],
          f"Durations ({timeunit})", lipid, f"{path}/PyLipID_cutoff_test_{lipid}/test_cutoff_durations_{lipid}.pdf")
-   lip_test.graph(cutoff_list, [num_of_contacting_residues[cutoffs] for cutoffs in cutoff_list],
+        lip_test.graph(cutoff_list, [num_of_contacting_residues[cutoffs] for cutoffs in cutoff_list],
          "num. of contacting residues", lipid,
          f"{path}/PyLipID_cutoff_test_{lipid}/test_cutoff_num_of_contacting_residues_{lipid}.pdf")
 
