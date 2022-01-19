@@ -32,7 +32,7 @@ do
     sed -i "s/XXX/${simtime%.*}/g" ${MDP}/md.mdp
 
     # Change defaut lincs_iter and lincs_order params if CHOL with virtual sites is present in the membrane
-    if [[ ${3} == *"CHOL"* ]]; then lin=$'lincs_iter   =     2 \nlincs_order   =     12' ; echo "$lin" >> ${MDP}/md.mdp ; fi
+    if [[ ${3} == *"CHOL"* ]] && [ ${i} == 1 ]; then lin=$'lincs_iter   =     2 \nlincs_order   =     12' ; echo "$lin" >> ${MDP}/md.mdp ; fi
 
     # cp itp files to the dir
     cp ../itp_files/*.itp .
@@ -101,7 +101,7 @@ EOF
 
     # MD
     gmx grompp -f ${MDP}/md.mdp -c eq.2.gro -r eq.2.gro -p system_corrected.top -n index.ndx -o md.tpr -maxwarn 1 >& output_files/md_grompp
-    if [[ -f eq.2.gro ]]; then echo "md.tpr file generated"; fi
+    if [[ -f md.tpr ]]; then echo "md.tpr file generated"; fi
 
     rm *#
     rm step*.pdb

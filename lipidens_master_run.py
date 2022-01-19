@@ -24,9 +24,11 @@ The protocol code can be decomposed into numbered stages corresponding to:
 5) Ranking site lipids
 6) Setting up atomistic simulations
 
-Each subsection should be run independently by e.g. commenting out latter stages of the protocol. This is essential because, while the protocol establishes inputs needed
-for coarse-grained or atomistic simulations it will not run the simulations. The user run simulations locally or offload to a high performance computing facility.
+Each subsection can be run independently by e.g. selected the appropriate stage of the protocol. This is essential because, while the protocol establishes inputs needed
+for coarse-grained or atomistic simulations it will not run the simulations. The user can run simulations locally or offload to a high performance computing facility.
 Sections corresponding to simulation runs are marked by ### PAUSE POINT ###. Once simulations have reached completion the pipeline can be resumed to analyse and process data.
+
+To analyse simulations only users should store the trajectories under: "<Directory_name>/runX" for X number of replicates.
 
 Within each subsection the code can be decomposed into a list of USER DEFINED VARIABLES and the associated CODE for that section.
 
@@ -37,7 +39,7 @@ Author: T. Bertie Ansell, Wanling Song
 ### Establish paths to be used in protocol ###
 ##############################################
 protocol_path=os.path.dirname(lipidens.__file__)
-save_dir=str(input("\nDirectory name: "))
+save_dir=str(input("\nDirectory name: ") or "LipIDens_data")
 path=lipidens.system_setup.setup(protocol_path, save_dir)
 input_step=lipidens.system_setup.run_type()
 
@@ -49,12 +51,13 @@ input_step=lipidens.system_setup.run_type()
 if input_step=="1a":
     print("\nInputs:\nAtomistic .pdb file of protein. Protein residues should not have missing atoms however missing segments/loops are permitted.")
     protein_AT_full=str(input("Protein .pdb file name: "))
-    nprot=int(input("\nNumber of homomeric protein chains, for heteromers input '1': "))
+    print("\nPRESS ENTER FOR DEFAULTS")
+    nprot=int(input("\nNumber of homomeric protein chains, for heteromers input '1' (default: 1): ") or 1)
     print("\nShift protein position in membrane to align TM region within the bilayer (value can also be negative).")
-    protein_shift=int(input("Protein shift: "))
+    protein_shift=int(input("Protein shift e.g. 1.3 (default: 0): ") or 0)
     print("\nRotate the protein position to align TM region within the bilayer (angle in x y z)")
-    protein_rotate=str(input("Protein rotate e.g. '0 90 0': "))
-    boxsize=str(input("Simulation box size (nm) e.g. '15,15,15': "))
+    protein_rotate=str(input("Protein rotate (default: 0 90 0): ") or '0 90 0')
+    boxsize=str(input("Simulation box size (nm) (default: 15,15,15): ") or '15,15,15')
 
     forcefield_dict={"1": "martini_v2.0",
                      "2": "martini_v2.1",
@@ -64,14 +67,14 @@ if input_step=="1a":
     print(*[f"\n{key}: {val}" for key, val in forcefield_dict.items()])
     forcefield=forcefield_dict[str(input("\nSelect forcefield:"))]
 
-    #change membrane composiiton selection to custom/pre-defined number selection
-    print("Define membrane composition.\nCan either select from predefined membrane compositions or define using insane.py syntax.\nCurrent predefined membrane compositions available:\n['Gram neg. inner membrane', 'Gram neg. outer membrane','Plasma membrane', 'ER membrane', 'Raft-like microdomain', 'Simple']\nExample of custom bilayer composition (-u=upper leaflet, -l=lower leaflet):\n'-u POPC:50 -u DOPC:50 -l POPE:30 -l CHOL:10 -l DOPE:60'")
-    membrane_composition=str(input("Membrane composition: "))
+    print("\nDefine membrane composition.\nCan either select from predefined membrane compositions or define using insane.py syntax.")
+    print("\nCurrent predefined membrane compositions available:\n['Gram neg. inner membrane', 'Gram neg. outer membrane','Plasma membrane', 'ER membrane', 'Raft-like microdomain', 'Simple']\n\nExample of custom bilayer composition (-u=upper leaflet, -l=lower leaflet):\n'-u POPC:50 -u DOPC:50 -l POPE:30 -l CHOL:10 -l DOPE:60'")
+    membrane_composition=str(input("\nMembrane composition: "))
 
-    CG_simulation_time=15 # time in us - recommended to simulate for at least 5us per replicate, ideally 10-15us
-    replicates=3 # number of CG replicates
-    stride=10 # Skip every X no. frame during trajectory processing and running PyLipID
-    n_cores=16 # Number of CPU to use to run gromacs mdrun commands
+    CG_simulation_time=int(input("\nCoarse grain simulation time (in us) (default: 15): ") or 15)
+    replicates=int(input("Number of replicates (default: 10): ") or 10)
+
+    n_cores=int(input("Number of CPU to use (default: 16): ") or 16)
 
 
     #############################
@@ -93,6 +96,7 @@ if input_step=="1a":
 
 ### Process CG trajectories ###
 if input_step=="1b":
+    stride=int(input("Skip every X no. frames during trajectory processing (default: 10): ") or 10)
     ps.trjconv_CG(protocol_path, stride, replicates, path)
 
 ################################################
@@ -100,7 +104,10 @@ if input_step=="1b":
 ### USER DEFINED VARIABLES #####################
 ################################################
 if input_step=="2":
-    lipid_atoms = None # all lipid atom/bead will be considered
+    param_dict={"Lipid":[variable , value]}
+    param_dict=lipidens.system_setup.param_check()
+
+    #lipid_atoms=str(input("Lipid atoms (default: None, all lipid)")) = None # all lipid atom/bead will be considered
     contact_frames = 30  # will only plot data if the contact was formed over X number of frames where X=contact_frames.
     distance_threshold = 0.65 # plot data only if lipid comes within distance_treshold of the protein
 
