@@ -104,22 +104,26 @@ if input_step=="1b":
 ### USER DEFINED VARIABLES #####################
 ################################################
 if input_step=="2":
-    param_dict={"Lipid":[variable , value]}
-    param_dict=lipidens.system_setup.param_check()
+    #param_dict={1 :[variable, value, description, type]}
+    param_dict={"1": ["lipid_atoms", None, "Lipid atoms to test (default: None uses all atoms)", "list_str"],
+                "2": ["contact_frames", 30, "Only plot data if contact formed over <contact_frames> number of frames", "int"],
+                "3": ["distance_threshold", 0.65, "Only plot data if lipid comes within <distance_treshold> of the protein (nm)", "float"],
+                "4": ["lower_cutoff", [0.4, 0.425, 0.45, 0.475, 0.5, 0.55], "List of lower cut-offs to test in exhaustive search (nm)", "list_float"],
+                "5": ["upper_cutoff", [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9], "List of upper cut-offs to test in exhaustive search (nm)", "list_float"],
+                "6": ["timeunit", "us", "Time unit to plot", "str"]}
+    param_dict=lipidens.system_setup.param_check(param_dict, "testing PyLipID cut-offs")
 
-    #lipid_atoms=str(input("Lipid atoms (default: None, all lipid)")) = None # all lipid atom/bead will be considered
-    contact_frames = 30  # will only plot data if the contact was formed over X number of frames where X=contact_frames.
-    distance_threshold = 0.65 # plot data only if lipid comes within distance_treshold of the protein
-
-    lower_cutoff = [0.4, 0.425, 0.45, 0.475, 0.5, 0.55] # list of lower cutoffs to test in exhaustive search
-    upper_cutoff = [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9] # list of upper cutoffs to test in exhaustive search
-    timeunit = "us"
+    lipid_atoms=param_dict["1"][1]
+    contact_frames=param_dict["2"][1]
+    distance_threshold=param_dict["3"][1]
+    lower_cutoff=param_dict["4"][1]
+    upper_cutoff=param_dict["5"][1]
+    timeunit=param_dict["6"][1]
 
     #############################
     ### Section 2: CODE Below ###
     #############################
     ### Testing PyLipID cut-offs  ###
-
     lip_list=lip_test.get_lipids(bilayer=None)
     traj=lip_test.load_traj(path)
     for lipid in lip_list:
