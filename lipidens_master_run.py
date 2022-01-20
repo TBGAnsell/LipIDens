@@ -218,10 +218,16 @@ if input_step=="5":
 ### USER DEFINED VARIABLES ########################
 ###################################################
 if input_step=="6":
-    input_CG_frame="md_stride_t500.gro" # Input CG frame for backmapping to atomistic detail
-    model_type="aligned" # Option to specify whether to use 'aligned' or 'de_novo' structure from CG2AT for input of the AT simulations
-    replicates_AT=1 # Number of atomistic simulation replicates
-    AT_simulation_time=100 # Time in ns
+    input_CG_frame=str(input("\nInput coarse-grained frame for backmapping to atomistic detail: "))
+    protein_AT_full=str(input("Atomistic protein .pdb file name: "))
+    print("\nProtein coordinates are backmapped either to the structure conformation (aligned) or those of the CG frame (de_novo).")
+    model_type_dict={"1": "de_novo",
+                     "2": "aligned"}
+
+    print(*[f"\n{key}: {val}" for key, val in model_type_dict.items()])
+    model_type=model_type_dict[str(input("\nSelect protein backmapping model type (default: de_novo):") or 1)]
+    replicates_AT=int(input("Number of atomistic simulation replicates (default: 3): ") or 3)
+    AT_simulation_time=int(input("\nAtomistic simulation time (in ns) (default: 100): ") or 100)
 
     #############################
     ### Section 6: CODE Below ###
