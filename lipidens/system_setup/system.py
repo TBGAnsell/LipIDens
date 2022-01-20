@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import ast
 
 """
 Basic function for establishing path of simulation data.
@@ -76,12 +77,24 @@ def param_check(input_dict, step_str):
                         var=var.replace(rc, "")
                     var=list(var.split())
                     var=[float(v) for v in var]
+                elif input_dict[id][3] =="bool":
+                    var=input("Change {} to: ".format(input_dict[id][0]))
+                    while var != "True" or "False":
+                        var=input("Must enter 'True' or 'False': ")
+                    if var=="True":
+                        var=bool(1)
+                    elif var=="False":
+                        var=bool(0)
+                elif input_dict[id][3] =="dict":
+                    var=input("Change {} to: ".format(input_dict[id][0]))
+                    var=ast.literal_eval(var)
                 input_dict[id][1]=var
             print("Variables set")
             print(*[f"\n\t{val[0]}: {val[1]}" for key, val in input_dict.items()])
         elif response=="n":
             input_dict=input_dict
             print("Variables set")
+            print(*[f"\n\t{val[0]}: {val[1]}" for key, val in input_dict.items()])
         else:
             print("INVALID: Must enter y/n")
             exit()

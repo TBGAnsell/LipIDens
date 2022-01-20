@@ -104,21 +104,18 @@ if input_step=="1b":
 ### USER DEFINED VARIABLES #####################
 ################################################
 if input_step=="2":
+    nprot=int(input("\nNumber of homomeric protein chains, for heteromers input '1' (default: 1): ") or 1)
+    replicates=int(input("Number of replicates to analyse: "))
     #param_dict={1 :[variable, value, description, type]}
     param_dict={"1": ["lipid_atoms", None, "Lipid atoms to test (default: None uses all atoms)", "list_str"],
                 "2": ["contact_frames", 30, "Only plot data if contact formed over <contact_frames> number of frames", "int"],
                 "3": ["distance_threshold", 0.65, "Only plot data if lipid comes within <distance_treshold> of the protein (nm)", "float"],
                 "4": ["lower_cutoff", [0.4, 0.425, 0.45, 0.475, 0.5, 0.55], "List of lower cut-offs to test in exhaustive search (nm)", "list_float"],
                 "5": ["upper_cutoff", [0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9], "List of upper cut-offs to test in exhaustive search (nm)", "list_float"],
-                "6": ["timeunit", "us", "Time unit to plot", "str"]}
+                "6": ["timeunit", "us", "Time unit to plot", "str"],
+                "7": ["stride", 10, "Skip every X no. frames", "int"]}
     param_dict=lipidens.system_setup.param_check(param_dict, "testing PyLipID cut-offs")
-
-    lipid_atoms=param_dict["1"][1]
-    contact_frames=param_dict["2"][1]
-    distance_threshold=param_dict["3"][1]
-    lower_cutoff=param_dict["4"][1]
-    upper_cutoff=param_dict["5"][1]
-    timeunit=param_dict["6"][1]
+    lipid_atoms, contact_frames, distance_threshold, lower_cutoff, upper_cutoff, timeunit, stride=(param_dict[f"{x}"][1] for x in range(1, len(param_dict)+1))
 
     #############################
     ### Section 2: CODE Below ###
@@ -152,42 +149,26 @@ if input_step=="2":
 ### USER DEFINED VARIABLES #######################################################
 ##################################################################################
 if input_step=="3":
-    cutoffs = [0.5, 0.7]  # dual-cutoff scheme for coarse-grained simulations. Single-cutoff scheme can be
-                          # achieved by using the same value for two cutoffs.
-    lipid_atoms = None # all lipid atom/bead will be considered
-    dt_traj = None  # the timestep of trajectories. Need to use this param when trajectories are in a format
-                    # with no timestep information. Not necessary for trajectory formats of e.g. xtc, trr.
+    nprot=int(input("\nNumber of homomeric protein chains, for heteromers input '1' (default: 1): ") or 1)
+    replicates=int(input("\nNumber of replicates to analyse: "))
+    param_dict={"1": ["lipid_atoms", None, "Lipid atoms to test (default: None uses all atoms).", "list_str"],
+                "2": ["dt_traj", None, "Need to change this when trajectories are in a format with no timestep information.\nNot necessary for trajectory formats of e.g. xtc, trr.", "str"],
+                "3": ["binding_site_size", 4, "Binding site should contain at least <binding_site_size> residues.", "int"],
+                "4": ["n_top_poses", 3, "Write out num. of representative bound poses for each binding site.", "int"],
+                "5": ["n_clusters", "auto", "Cluster the bound poses for a binding site into <n_clusters> clusters.\nBy default, i.e. auto, PyLipID will use a density based clusterer to find all possible clusters.", "int"],
+                "6": ["save_pose_format", "gro", "Pose coordinate file format - 'gro' or 'pdb'.", "str"],
+                "7": ["save_pose_traj", True, "Save the bound poses to a trajectory for each binding site.", "bool"],
+                "8": ["save_pose_traj_format", "xtc", "The format for the saved pose trajectories - any format supported by mdtraj.", "str"],
+                "9": ["timeunit", "us", "Time unit for plots.", "str"],
+                "10": ["resi_offset", 0, "Shift the residue index by <resi_offset>.", "int"],
+                "11": ["radii", None, "Radii of protein atoms/beads in the format of python dictionary {atom_name: radius}. \nThe default (None) includes the van der waals radii of common atoms were defined by mdtraj (https://github.com/mdtraj/mdtraj/blob/master/mdtraj/geometry/sasa.py#L56). \nThe radii of MARTINI 2.2 beads were included in PyLipID.", "dict"],
+                "12": ["fig_format", "pdf", "Save format for figures - all formats supported by matplotlib.pyplot.savefig().", "str"],
+                "13": ["num_cpus", None, "The number of cpu to use when functions are using multiprocessing.\nThe default (None) will use all available cpus.", "int"],
+                "14": ["stride", 10, "Skip every X no. frames", "int"]}
+    param_dict=lipidens.system_setup.param_check(param_dict, "running PyLipID analysis")
+    lipid_atoms, dt_traj, binding_site_size, n_top_poses, n_clusters, save_pose_format, save_pose_traj, save_pose_traj_format, timeunit, resi_offset, radii, fig_format, num_cpus, stride=(param_dict[f"{x}"][1] for x in range(1, len(param_dict)+1))
 
-    binding_site_size = 4  # binding site should contain at least four residues.
-    n_top_poses = 3     # write out num. of representative bound poses for each binding site.
-    n_clusters = "auto" # cluster the bound poses for a binding site into num. of clusters. PyLipID
-                        # will write out a pose conformation for each of the cluster. By default, i.e.
-                        # "auto", PyLipID will use a density based clusterer to find possible clusters.
-    save_pose_format = "gro"  # format that poses are written in
-    save_pose_traj = True  # save all the bound poses in a trajectory for each binding site. The generated
-                           # trajectories can take some disk space (up to a couple GB depending on your system).
-    save_pose_traj_format = "xtc"  # The format for the saved pose trajectories. Can take any format that is supported
-                                 #   by mdtraj.
-
-    timeunit = "us"  # micro-sec. "ns" is nanosecond. Time unit used for reporting the results.
-    resi_offset = 0  # shift the residue index, useful for MARTINI models.
-
-    radii = None  # Radii of protein atoms/beads. In the format of python dictionary {atom_name: radius}
-             #  Used for calculation of binding site surface area. The van der waals radii of common atoms were
-             #  defined by mdtraj (https://github.com/mdtraj/mdtraj/blob/master/mdtraj/geometry/sasa.py#L56).
-             # The radii of MARTINI 2.2 beads were included in PyLipID.
-
-    pdb_file_to_map = "TMD.pdb"   # if a pdb coordinate of the receptor is provided, a python script
-                        # "show_binding_site_info.py" will be generated which maps the binding
-                        # site information to the structure in PyMol. As PyMol cannot recognize
-                        # coarse-grained structures, an atomistic structure of the receptor is needed.
-
-    fig_format = "pdf"  # format for all pylipid produced figures. Allow for formats that are supported by
-                   # matplotlib.pyplot.savefig().
-
-    num_cpus = None  # the number of cpu to use when functions are using multiprocessing. By default,
-                     # i.e. None, the functions will use up all the cpus available. This can use up all the memory in
-                     # some cases.
+    pdb_file_to_map = str(input("\nAtomistic pdb coordinate file of protein. If provided, binding site information will be mapped to structure: "))
 
     #############################
     ### Section 3: CODE Below ###
@@ -196,6 +177,9 @@ if input_step=="3":
     trajfile_list, topfile_list=lip_run.get_trajectories(path, replicates)
     lip_list=lip_test.get_lipids(bilayer=None)
     for lipid in lip_list:
+        print(f"\nIMPORTANT: Select cut-off scheme used to caluclate protein-{lipid} interactions.\nA single cut-off can be achieved using the same value for the lower and upper cutoff.")
+        cutoffs= input("\nDual cut-off scheme in format lower, upper cut-off (nm) seperated by space e.g. '0.5 0.7': ").split()
+        cutoffs=[float(x) for x in cutoffs]
         lip_run.run_pylipid(trajfile_list, topfile_list, dt_traj, stride, lipid, lipid_atoms, cutoffs, nprot, binding_site_size,
        n_top_poses, n_clusters, save_dir, save_pose_format, save_pose_traj, save_pose_traj_format, timeunit, resi_offset,
         radii, pdb_file_to_map, fig_format, num_cpus)
