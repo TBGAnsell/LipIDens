@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pylipid.api import LipidInteraction
 from pylipid.util import check_dir
+import os
 
 """
 Run PyLipID on CG trajectories of a membrane protein system for a given lipid type.
@@ -14,13 +15,40 @@ Author: Wanling Song
 def get_trajectories(path, replicates):
     trajfile_list=[]
     topfile_list=[]
-    for n in range(1, replicates+1):
-        trajfile="{}/run{}/md_stride.xtc".format(path, n)
-        topfile="{}/run{}/md_stride_firstframe.gro".format(path, n)
-        trajfile_list.append(trajfile)
-        topfile_list.append(topfile)
+
+    xtc_def="md_stride.xtc"
+    top_def="md_stride_firstframe.gro"
+
+    for n in range(1,replicates+1):
+        try:
+            if os.path.isfile("{}/run{}/{}".format(path, n, xtc_def)):
+                trajfile="{}/run{}/{}".format(path, n, xtc_def)
+            else:
+                print("\n{}/run{}/{} not found.".format(path, n, xtc_def))
+                xtc_def=str(input("Define alternative 'xtc' file name: "))
+                if os.path.isfile("{}/run{}/{}".format(path, n, xtc_def)):
+                    trajfile="{}/run{}/{}".format(path, n, xtc_def)
+                else:
+                    print("\n{}/run{}/{} not found.".format(path, n, xtc_def))
+                    exit()
+            if os.path.isfile("{}/run{}/{}".format(path, n, top_def)):
+                topfile="{}/run{}/{}".format(path, n, top_def)
+            else:
+                print("\n{}/run{}/{} not found.".format(path, n, top_def))
+                top_def=str(input("Define alternative topology file name: "))
+                if os.path.isfile("{}/run{}/{}".format(path, n, top_def)):
+                    topfile="{}/run{}/{}".format(path, n, top_def)
+                else:
+                    print("\n{}/run{}/{} not found.".format(path, n, top_def))
+                    exit()
+            trajfile_list.append(trajfile)
+            topfile_list.append(topfile)
+        except Exception as e:
+            print(e)
+            exit()
     print("List of trajectories to test:", trajfile_list)
     return trajfile_list, topfile_list
+
 
 #### calculate lipid interactions
 def run_pylipid(trajfile_list, topfile_list, dt_traj, stride,  lipid, lipid_atoms, cutoffs, nprot, binding_site_size,

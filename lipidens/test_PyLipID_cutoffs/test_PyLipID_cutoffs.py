@@ -217,7 +217,7 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
                 else:
                     print("\n{}/run{}/{} not found.".format(path, n, top_def))
                     exit()
-            #topfile="{}/run{}/md_stride_firstframe.gro".format(path, n)
+        
             trajfile_list.append(trajfile)
             topfile_list.append(topfile)
         except Exception as e:
