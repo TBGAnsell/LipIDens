@@ -37,7 +37,7 @@ Detailed steps for the usage and implementation of LidIDens are provided within 
 
 In addition, a jupyter notebook tutorial is provided to assist implementation (`LipIDens_Protocol_jupyter_notebook.ipynb`). 
 
-LipIDens can also be run using the standalone `master_run.py` script.  
+LipIDens can also be run using the standalone `lipidens_master_run.py` (user inputs variables to terminal) or `master_run.py` (define variables within script a priori) scripts.  
 
 
 ## Citation:
