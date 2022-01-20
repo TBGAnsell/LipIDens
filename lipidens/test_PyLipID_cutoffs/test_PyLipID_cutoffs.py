@@ -43,14 +43,50 @@ def load_traj(path):
     """
     Load single trajectory used for obtaining lipid probability distribution.
     """
+    xtc_def="md_stride.xtc"
+    top_def="md_stride_firstframe.gro"
+
     print("\nLoading processed trajectories for cutoff testing:")
     try:
-        trajfile = "{}/run1/md_stride.xtc".format(path)
-        topfile =  "{}/run1/md_stride_firstframe.gro".format(path)
+        if os.path.isfile("{}/run1/{}".format(path, xtc_def)):
+            trajfile = "{}/run1/{}".format(path, xtc_def)
+        else:
+            print("\n{}/run1/{} not found.\nHave you processed the CG trajectories?".format(path, xtc_def))
+            r_alt=str(input("Do you wish to define alternative 'xtc' file name? (y/n): "))
+            if r_alt=="y":
+                xtc_def=str(input("\nDefine alternative 'xtc' file name: "))
+                if os.path.isfile("{}/run1/{}".format(path, xtc_def)):
+                    trajfile="{}/run1/{}".format(path, xtc_def)
+                else:
+                    print("\n{}/run1/{} not found.".format(path, xtc_def))
+                    exit()
+            elif r_alt=="n":
+                print("Re-run protocol to process CG trajectories")
+                exit()
+            else:
+                print("INVALID: must enter y/n")
+                exit()
+        if os.path.isfile("{}/run1/{}".format(path, top_def)):
+            topfile =  "{}/run1/{}".format(path, top_def)
+        else:
+            print("\n{}/run1/{} not found.\nHave you processed the CG trajectories?".format(path, top_def))
+            r_alt=str(input("Do you wish to define alternative topology file? (y/n): "))
+            if r_alt=="y":
+                top_def=str(input("\nDefine alternative topology file name: "))
+                if os.path.isfile("{}/run1/{}".format(path, top_def)):
+                    topfile =  "{}/run1/{}".format(path, top_def)
+                else:
+                    print("\n{}/run1/{} not found.".format(path, top_def))
+                    exit()
+            elif r_alt=="n":
+                print("Re-run protocol to process CG trajectories")
+                exit()
+            else:
+                print("INVALID: must enter y/n")
+                exit()
         traj = md.load(trajfile, top=topfile)
     except Exception as e:
         print(e)
-        print("Have you processed the trajectories?".format(path))
         exit()
     return traj
 
@@ -156,14 +192,36 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
     trajfile_list=[]
     topfile_list=[]
 
+    xtc_def="md_stride.xtc"
+    top_def="md_stride_firstframe.gro"
+
     for n in range(1,replicates+1):
         try:
-            trajfile="{}/run{}/md_stride.xtc".format(path, n)
-            topfile="{}/run{}/md_stride_firstframe.gro".format(path, n)
+            if os.path.isfile("{}/run{}/{}".format(path, n, xtc_def)):
+                trajfile="{}/run{}/{}".format(path, n, xtc_def)
+            else:
+                print("\n{}/run{}/{} not found.".format(path, n, xtc_def))
+                xtc_def=str(input("Define alternative 'xtc' file name: "))
+                if os.path.isfile("{}/run{}/{}".format(path, n, xtc_def)):
+                    trajfile="{}/run{}/{}".format(path, n, xtc_def)
+                else:
+                    print("\n{}/run{}/{} not found.".format(path, n, xtc_def))
+                    exit()
+            if os.path.isfile("{}/run{}/{}".format(path, n, top_def)):
+                topfile="{}/run{}/{}".format(path, n, top_def)
+            else:
+                print("\n{}/run{}/{} not found.".format(path, n, top_def))
+                top_def=str(input("Define alternative topology file name: "))
+                if os.path.isfile("{}/run{}/{}".format(path, n, top_def)):
+                    topfile="{}/run{}/{}".format(path, n, top_def)
+                else:
+                    print("\n{}/run{}/{} not found.".format(path, n, top_def))
+                    exit()
+            #topfile="{}/run{}/md_stride_firstframe.gro".format(path, n)
             trajfile_list.append(trajfile)
             topfile_list.append(topfile)
-        except:
-            print("Cannot find skipped trajectory located at {}/run{}/md_stride.xtc - have you processed the trajectories?".format(path, n))
+        except Exception as e:
+            print(e)
             exit()
 
     print("List of trajectories to test:", trajfile_list, "\n")

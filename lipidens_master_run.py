@@ -39,7 +39,7 @@ Author: T. Bertie Ansell, Wanling Song
 ### Establish paths to be used in protocol ###
 ##############################################
 protocol_path=os.path.dirname(lipidens.__file__)
-save_dir=str(input("\nDirectory name: ") or "LipIDens_data")
+save_dir=str(input("\nDirectory name (default: LipIDens_data): ") or "LipIDens_data")
 path=lipidens.system_setup.setup(protocol_path, save_dir)
 input_step=lipidens.system_setup.run_type()
 
