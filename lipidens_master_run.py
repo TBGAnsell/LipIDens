@@ -96,6 +96,7 @@ if input_step=="1a":
 
 ### Process CG trajectories ###
 if input_step=="1b":
+    replicates=int(input("Number of replicates to process: "))
     stride=int(input("Skip every X no. frames during trajectory processing (default: 10): ") or 10)
     ps.trjconv_CG(protocol_path, stride, replicates, path)
 
