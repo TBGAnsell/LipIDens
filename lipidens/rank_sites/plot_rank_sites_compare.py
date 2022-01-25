@@ -13,6 +13,33 @@ Author: TBG Ansell
 
 """
 
+def get_site_compare(lip_list):
+    """
+    Generate dictionary of lipid sites to compare in format: dict={"lipid":[list of site IDs]}.
+    """
+    print('\n'*2+"Generate dictionary of lipids (keys) and a list of binding site indices (values) to compare.")
+    print("Example:\nBindingSite_ID_dict={'POPC': [1, 2, 5, 3],\n\t'POPE': [2, 3, 6, 1],\n\t'CHOL':[1, 3, 5, 'X']}")
+    print("\nThe residence time of sites are compared in the listed order \ne.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.")
+    print("'X' denotes when an equivilent site does not exist.")
+
+    BS_ID_dict={}
+    for idx, lipid in enumerate(lip_list):
+        try:
+            print('\n'*2+'-'*10+f'{lipid}'+'-'*10)
+            site_ID_list=input(f"List {lipid} site IDs in comparsion order e.g '0 2 3': ")
+            remove_char=["[", "]", ","]
+            for rc in remove_char:
+                site_ID_list=site_ID_list.replace(rc,"")
+            site_ID_list=list(site_ID_list.split())
+            site_ID_list=[int(sd) if sd.isnumeric() else 'X' for sd in site_ID_list]
+            BS_ID_dict[lipid]=site_ID_list
+            print(f"\nBindingSite_ID_dict={BS_ID_dict}")
+        except Exception as e:
+            print(e)
+    print("\nLipid binding sites to compare:")
+    print(*[f"\n\t{lip}: {site}" for lip, site in BS_ID_dict.items()])
+    return BS_ID_dict
+
 def get_BSstat(path, site_dict):
     """
     Load binding site data for lipid sites in site_dict.

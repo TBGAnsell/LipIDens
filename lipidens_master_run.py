@@ -203,9 +203,11 @@ if input_step=="4":
 ### USER DEFINED VARIABLES ###########
 ######################################
 if input_step=="5":
-    BindingSite_ID_dict={"POPC": [1, 2 , 5, 3],     # Dictionary of lipids (keys) and a list of binding site indices (values) to compare. The residence time of
-              "POPE": [2, 3, 6, 1],                # sites are compared in the listed order e.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.
-              "CHOL":[1, 3, 5, "X"]}
+    lip_list=lip_test.get_lipids(bilayer=None)
+    BindingSite_ID_dict=rs.get_site_compare(lip_list)
+    #BindingSite_ID_dict={"POPC": [1, 2 , 5, 3],     # Dictionary of lipids (keys) and a list of binding site indices (values) to compare. The residence time of
+    #          "POPE": [2, 3, 6, 1],                # sites are compared in the listed order e.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.
+    #          "CHOL":[1, 3, 5, "X"]}
 
     #############################
     ### Section 5: CODE Below ###
