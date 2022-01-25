@@ -33,7 +33,6 @@ Within each subsection the code can be decomposed into a list of USER DEFINED VA
 Author: T. Bertie Ansell, Wanling Song
 
 """
-### Full mdp files - not shortened ###
 ##########################################################
 ### Section 1:Setting up and performing CG simulations ###
 ### USER DEFINED VARIABLES ###############################
@@ -44,7 +43,7 @@ protein_shift=0 # Shift protein position in membrane to align TM region within t
 protein_rotate='0 90 0' # Rotate the protein position to align TM region within the bilayer (angle in x y z)
 boxsize='15,15,15' # CG simulation box size
 
-save_dir="Test" # Save directory name
+save_dir="Test3" # Save directory name
 
 forcefield='martini_v2.2' # Currently compatible with martini_v2.0, martini_v2.1, martini_v2.2, martini_v3.0.0
 membrane_composition='Simple' # Define membrane composition.
