@@ -43,7 +43,7 @@ protein_shift=0 # Shift protein position in membrane to align TM region within t
 protein_rotate='0 90 0' # Rotate the protein position to align TM region within the bilayer (angle in x y z)
 boxsize='15,15,15' # CG simulation box size
 
-save_dir="Test3" # Save directory name
+save_dir="Test" # Save directory name
 
 forcefield='martini_v2.2' # Currently compatible with martini_v2.0, martini_v2.1, martini_v2.2, martini_v3.0.0
 membrane_composition='Simple' # Define membrane composition.
@@ -58,7 +58,7 @@ membrane_composition='Simple' # Define membrane composition.
 
 #membrane_composition='-u POPC:100 -l DOPC:100'
 CG_simulation_time=15 # time in us - recommended to simulate for at least 5us per replicate, ideally 10-15us
-replicates=3 # number of CG replicates
+replicates=2 # number of CG replicates
 stride=10 # Skip every X no. frame during trajectory processing and running PyLipID
 n_cores=16 # Number of CPU to use to run gromacs mdrun commands
 
