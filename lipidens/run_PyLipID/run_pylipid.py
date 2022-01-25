@@ -13,6 +13,9 @@ Author: Wanling Song
 """
 
 def get_trajectories(path, replicates):
+    """
+    Load trajectory list to be analysed using PyLipID.
+    """
     trajfile_list=[]
     topfile_list=[]
 

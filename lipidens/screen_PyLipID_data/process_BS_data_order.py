@@ -14,6 +14,9 @@ Author: TBG Ansell
 """
 
 def get_data(path, lipid):
+    """
+    Generate summary of binding site data as csv.
+    """
     ### Load the basic data ###
     # All data #
     try:
@@ -34,6 +37,9 @@ def get_data(path, lipid):
 
 ### Plot the data ###
 def plot_screen_data(data, path, lipid):
+    """
+    Generate plot of screened site data in site order.
+    """
     # BS categories to plot #
     BS_cats={"koff_diff": r"$\Delta$$k_{off}$",
       "Binding Site Residence Time":r"Residence Time ($\mu$s)" ,
