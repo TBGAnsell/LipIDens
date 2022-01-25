@@ -46,7 +46,7 @@ def load_traj(path):
     xtc_def="md_stride.xtc"
     top_def="md_stride_firstframe.gro"
 
-    print("\nLoading processed trajectories for cutoff testing:")
+    print("\nLoading processed trajectories for cut-off testing:")
     try:
         if os.path.isfile("{}/run1/{}".format(path, xtc_def)):
             trajfile = "{}/run1/{}".format(path, xtc_def)
@@ -92,7 +92,7 @@ def load_traj(path):
 
 def set_lipid(path, lipid):
     """
-    Establish save directory of cutoff test data.
+    Establish save directory of cut-off test data.
     """
     save_dir = "{}/PyLipID_cutoff_test_{}".format(path, lipid)
     fig_dir = check_dir(save_dir, "Figures", print_info=False)
@@ -159,14 +159,14 @@ def plot_PDF(distance_set, num_of_bins, fn, lipid):
 def test_cutoffs(cutoff_list, trajfile_list, topfile_list, lipid, lipid_atoms, nprot=1,
                  stride=1, save_dir=None, timeunit="us"):
     """
-    Perform exhastive cutoff testing by caluclating the number of binding sites, average duration and number of contacting residues
-    for each pair of cutoffs in the cutoff list.
+    Perform exhaustive cut-off testing by calculating the number of binding sites, average duration and number of contacting residues
+    for each pair of cut-offs in the cut-off list.
     """
     num_of_binding_sites = {}
     duration_avgs = {}
     num_of_contacting_residues = {}
     for cutoffs in cutoff_list:
-        print("\n Testing cutoff pair:", cutoffs, "\n")
+        print("\n Testing cut-off pair:", cutoffs, "\n")
         li = LipidInteraction(trajfile_list, topfile_list=topfile_list, cutoffs=cutoffs, lipid=lipid,
                               lipid_atoms=lipid_atoms, nprot=1, timeunit=timeunit,
                               save_dir=save_dir, stride=stride)
@@ -182,12 +182,12 @@ def test_cutoffs(cutoff_list, trajfile_list, topfile_list, lipid, lipid_atoms, n
 
 def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
     """
-    Obtain list of cutoff pairs to use for exhastive cutoff testing using user specified lower and upper cutoff lists.
+    Obtain list of cut-off pairs to use for exhaustive cut-off testing using user specified lower and upper cut-off lists.
     Load all coarse-grain trajectories to test.
     """
-    print("\nInitiating exhastive cutoff search:\n")
-    print("Lower cutoffs to test:", lower_cutoff)
-    print("Upper cutoffs to test:", upper_cutoff, "\n")
+    print("\nInitiating exhastive cut-off search:\n")
+    print("Lower cut-offs to test:", lower_cutoff)
+    print("Upper cut-offs to test:", upper_cutoff, "\n")
     cutoff_list = list(product(lower_cutoff, upper_cutoff))
     trajfile_list=[]
     topfile_list=[]
@@ -217,7 +217,7 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
                 else:
                     print("\n{}/run{}/{} not found.".format(path, n, top_def))
                     exit()
-        
+
             trajfile_list.append(trajfile)
             topfile_list.append(topfile)
         except Exception as e:
@@ -240,13 +240,13 @@ def ex_data_process(path, lipid, num_of_binding_sites, duration_avgs, num_of_con
 
 def graph(cutoff_list, metric_values, ylabel, title, fn):
     """
-    Plot the data from the exhastive cutoff testing.
+    Plot the data from the exhaustive cut-off testing.
     """
     fig, ax = plt.subplots(1, 1, figsize=(len(cutoff_list)*0.42, 3.6))
     ax.scatter(np.arange(len(cutoff_list)), metric_values, s=50, color='lightcoral')
     ax.set_xticks(np.arange(len(cutoff_list)))
     ax.set_xticklabels(cutoff_list, rotation=45, ha='right')
-    ax.set_xlabel("Dual cutoff")
+    ax.set_xlabel("Dual cut-off")
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     sns.despine(top=True, right=True)

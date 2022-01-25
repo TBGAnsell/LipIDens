@@ -4,7 +4,7 @@ import os
 import ast
 
 """
-Basic function for establishing path of simulation data.
+Basic function for establishing paths of simulation data.
 """
 
 def setup(protocol_path, save_dir=None):

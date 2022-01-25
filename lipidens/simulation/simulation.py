@@ -75,7 +75,7 @@ def bilayer_select(bilayer):
 
 def top_header(forcefield, path):
     """
-    Make topolopy file header in preperation for running the CG simulations.
+    Make topology file header in preparation for running the CG simulations.
     """
     itp_list=[i for i in os.listdir('{}/itp_files'.format(path)) if i.endswith('.itp')]
     itp_list.remove("{}.itp".format(forcefield))
@@ -105,7 +105,7 @@ def trjconv_CG(protocol_path, stride, replicates, path):
 
 def CG2AT(protocol_path, protein_AT_full, input_CG_frame, path):
     """
-    Run CG2AT using atomsitic structure and provided frame from CG simulations.
+    Run CG2AT using atomistic structure and provided frame from CG simulations.
     """
     print("\nRunning CG2AT\n")
     subprocess.check_call(["{}/simulation/run_CG2AT.sh".format(protocol_path), protein_AT_full, input_CG_frame, path])
