@@ -26,7 +26,7 @@ def get_site_compare(lip_list):
     for idx, lipid in enumerate(lip_list):
         try:
             print('\n'*2+'-'*10+f'{lipid}'+'-'*10)
-            site_ID_list=input(f"List {lipid} site IDs in comparsion order e.g '0 2 3': ")
+            site_ID_list=input(f"List {lipid} site IDs in comparsion order e.g '0 2 3 X 5': ")
             remove_char=["[", "]", ","]
             for rc in remove_char:
                 site_ID_list=site_ID_list.replace(rc,"")
@@ -48,14 +48,13 @@ def get_BSstat(path, site_dict):
     data=pd.DataFrame()
     for lipid in site_dict:
         try:
-            print(lipid)
+            print('\n'+lipid)
             interactions_csv=pd.read_csv(f"{path}/Interaction_{lipid}/Dataset_{lipid}/Dataset.csv")
             for idx, site in enumerate(site_dict[lipid]):
-                print(site)
                 if isinstance(site, int):
                     site_csv=interactions_csv[interactions_csv["Binding Site ID"] == site]
+                    #site_csv.loc[:,"koff_diff"]=site_csv.loc[:,"Binding Site Koff"] - site_csv.loc[:,"Binding Site Koff Bootstrap avg"]
                     site_csv["koff_diff"]=site_csv["Binding Site Koff"] - site_csv["Binding Site Koff Bootstrap avg"]
-
                     df=pd.DataFrame({"Lipid": lipid,
                         "Site_Idx": [idx],
                         "BS": site,
