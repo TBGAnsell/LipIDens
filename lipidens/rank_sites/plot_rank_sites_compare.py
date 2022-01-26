@@ -21,13 +21,13 @@ def compare_sites(path, lip_list):
             match_sites=pd.DataFrame()
 
             ref_lipid=lip_list[0]
-            print('\n'+ref_lipid)
+            print('Analysing '+ref_lipid)
             ref_csv=pd.read_csv(f"{path}/Interaction_{ref_lipid}/Dataset_{ref_lipid}/Dataset.csv")
             BS_ref=ref_csv["Binding Site ID"].unique()
 
             for lipid in lip_list[1:]:
                 tmp_df=pd.DataFrame()
-                print('\n'+lipid)
+                print('Analysing '+lipid)
                 target_csv=pd.read_csv(f"{path}/Interaction_{lipid}/Dataset_{lipid}/Dataset.csv")
                 BS_target=target_csv["Binding Site ID"].unique()
 
@@ -38,23 +38,28 @@ def compare_sites(path, lip_list):
                     for target_site in range(0, BS_target.max()+1):
                         target_resid_list=target_csv[target_csv["Binding Site ID"]==target_site]["Residue"].tolist()
                         res_count=len(set([x for x in ref_resid_list+target_resid_list if x in ref_resid_list and x in target_resid_list]))
+
                         target_BS_count[int(target_site)]=res_count/len(ref_resid_list+target_resid_list)
 
                     t=max(target_BS_count.values())
-                    target_max_sites=[key for key, value in target_BS_count.items() if value==t]
+                    if t>0.2:
+                         target_max_sites=[key for key, value in target_BS_count.items() if value==t]
+                    else:
+                         target_max_sites=["X"]
+                    #target_max_sites=[value for key, value in target_BS_count.items() if value==t]
 
                     df=pd.DataFrame({f"{ref_lipid}": ref_site,
                                     f"{lipid}": target_max_sites})
 
                     tmp_df=tmp_df.append(df, ignore_index=True)
-                    print(tmp_df)
 
                 match_sites=pd.concat([match_sites, tmp_df], axis=1)
 
             match_sites=match_sites.loc[:,~match_sites.columns.duplicated()]
             print(match_sites)
-
             BS_ID_dict=match_sites.to_dict('list')
+
+
             print(BS_ID_dict)
         except Exception as e:
             print(e)

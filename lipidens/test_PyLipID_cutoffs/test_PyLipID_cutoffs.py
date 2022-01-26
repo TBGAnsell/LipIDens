@@ -32,7 +32,7 @@ def get_lipids(bilayer):
         lip_list=list(set(re.findall(r'\w[A-Z0-9]{2,}', bilayer)))
     elif bilayer==None:
         bilayer=str(input("\nEnter lipid names for analysis seperated by space e.g. POPC DOPC: "))
-        lip_list=list(set(re.findall(r'\w[A-Z0-9]{2,}', bilayer)))
+        lip_list=list(re.findall(r'\w[A-Z0-9]{2,}', bilayer))
     else:
         print("Bilayer not found, please define the bilayer composition")
         exit()
