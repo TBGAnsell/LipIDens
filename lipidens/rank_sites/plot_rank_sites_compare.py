@@ -22,7 +22,7 @@ def compare_sites(path, lip_list):
             match_sites=pd.DataFrame()
 
             ref_lipid=lip_list[0]
-            print("IMPORTANT: First lipid entry used as reference - not reccomended to use sterols as the reference lipid as sites likely to differ from phospholipids.")
+            print("\nIMPORTANT: First lipid entry used as reference - not reccomended to use sterols as the reference lipid as sites likely to differ from phospholipids.")
             print('Reference lipid '+ref_lipid)
             ref_csv=pd.read_csv(f"{path}/Interaction_{ref_lipid}/Dataset_{ref_lipid}/Dataset.csv")
             BS_ref=ref_csv["Binding Site ID"].unique()
@@ -57,15 +57,16 @@ def compare_sites(path, lip_list):
                 match_sites=pd.concat([match_sites, tmp_df], axis=1)
 
             match_sites=match_sites.loc[:,~match_sites.columns.duplicated()]
+            print("\nAutomatically predicted matching binding sites for each lipid: \n", match_sites.to_string(index=False))
+            print("\nIMPORTANT: check you are happy with the site match by examining lipid poses.\nYou may wish to remove replicate or poorly defined sites.")
             BS_ID_dict=match_sites.to_dict('list')
 
             # Check for replicate matching sites for each lipid
             for col in match_sites:
                 repeat=match_sites[col].replace('X', np.nan).dropna().duplicated().any()
-                if repeat=True:
-                    print(f"A binding site was assigned twice for {lipid} - check which site poses match best")
+                if repeat:
+                    print(f"\nWARNING: A binding site was included twice for {lipid} - you may wish to check which site matches best.")
 
-            print(BS_ID_dict)
         except Exception as e:
             print(e)
             exit()
@@ -76,33 +77,36 @@ def compare_sites(path, lip_list):
     return BS_ID_dict
 
 
-def get_site_compare(lip_list, BS_predict_dict):
+def get_site_compare(lip_list, BS_ID_dict):
     """
     Generate dictionary of lipid sites to compare in format: dict={"lipid":[list of site IDs]}.
     """
-    print('\n'*2+"Generate dictionary of lipids (keys) and a list of binding site indices (values) to compare.")
-    print("Example:\nBindingSite_ID_dict={'POPC': [1, 2, 5, 3],\n\t'POPE': [2, 3, 6, 1],\n\t'CHOL':[1, 3, 5, 'X']}")
-    print("\nThe residence time of sites are compared in the listed order \ne.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.")
-    print("'X' denotes when an equivilent site does not exist.")
-
-    if BS_predict_dict:
-
-    BS_ID_dict={}
-    for idx, lipid in enumerate(lip_list):
-        try:
-            print('\n'*2+'-'*10+f'{lipid}'+'-'*10)
-            site_ID_list=input(f"List {lipid} site IDs in comparsion order e.g '0 2 3 X 5': ")
-            remove_char=["[", "]", ","]
-            for rc in remove_char:
-                site_ID_list=site_ID_list.replace(rc,"")
-            site_ID_list=list(site_ID_list.split())
-            site_ID_list=[int(sd) if sd.isnumeric() else 'X' for sd in site_ID_list]
-            BS_ID_dict[lipid]=site_ID_list
-            print(f"\nBindingSite_ID_dict={BS_ID_dict}")
-        except Exception as e:
-            print(e)
-    print("\nLipid binding sites to compare:")
-    print(*[f"\n\t{lip}: {site}" for lip, site in BS_ID_dict.items()])
+    if not BS_ID_dict:
+        print('\n'*2+"Generate dictionary of lipids (keys) and a list of binding site indices (values) to compare.")
+        print("Example:\nBindingSite_ID_dict={'POPC': [1, 2, 5, 3],\n\t'POPE': [2, 3, 6, 1],\n\t'CHOL':[1, 3, 5, 'X']}")
+        print("\nThe residence time of sites are compared in the listed order \ne.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.")
+        print("'X' denotes when an equivilent site does not exist.")
+        BS_ID_dict={}
+        for idx, lipid in enumerate(lip_list):
+            try:
+                print('\n'*2+'-'*10+f'{lipid}'+'-'*10)
+                site_ID_list=input(f"List {lipid} site IDs in comparsion order e.g '0 2 3 X 5': ")
+                remove_char=["[", "]", ","]
+                for rc in remove_char:
+                    site_ID_list=site_ID_list.replace(rc,"")
+                site_ID_list=list(site_ID_list.split())
+                site_ID_list=[int(sd) if sd.isnumeric() else 'X' for sd in site_ID_list]
+                BS_ID_dict[lipid]=site_ID_list
+                print(f"\nBindingSite_ID_dict={BS_ID_dict}")
+            except Exception as e:
+                print(e)
+        print("\nLipid binding sites to compare:")
+        print(*[f"\n\t{lip}: {site}" for lip, site in BS_ID_dict.items()])
+    else:
+        print(*[f"\n\t{lip}: {site}" for lip, site in BS_ID_dict.items()])
+        res=input("\nAccept predicted matching sites (y/n): ") or 'y'
+        if res=='y':
+            print("\nCorresponding sites accepted.")
     return BS_ID_dict
 
 def get_BSstat(path, site_dict):

@@ -209,7 +209,7 @@ if input_step=="5":
     ### Ranking site lipids ###
     lip_list=lip_test.get_lipids(bilayer=None)
     BS_predict_dict=rs.compare_sites(path, lip_list)
-    BindingSite_ID_dict=rs.get_site_compare(lip_list, BS_predict_dict)
+    BindingSite_ID_dict=rs.get_site_compare(lip_list, BS_ID_dict=BS_predict_dict)
     rank_data=rs.get_BSstat(path, BindingSite_ID_dict)
     rs.plot_site_rank(path, BindingSite_ID_dict, rank_data)
 
