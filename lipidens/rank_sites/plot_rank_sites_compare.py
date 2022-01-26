@@ -65,7 +65,7 @@ def compare_sites(path, lip_list):
             for col in match_sites:
                 repeat=match_sites[col].replace('X', np.nan).dropna().duplicated().any()
                 if repeat:
-                    print(f"\nWARNING: A binding site was included twice for {lipid} - you may wish to check which site matches best.")
+                    print(f"\nWARNING: A binding site was included twice for {col} - you may wish to check which site matches best.")
 
         except Exception as e:
             print(e)
