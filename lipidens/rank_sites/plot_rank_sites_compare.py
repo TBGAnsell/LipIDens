@@ -18,16 +18,18 @@ Author: TBG Ansell
 def compare_sites(path, lip_list):
     if len(lip_list)>1:
         try:
+            # Compare lipid sites based on comprising residues. Comparison made for each lipid against the reference lipid (first lipid in list).
             match_sites=pd.DataFrame()
 
             ref_lipid=lip_list[0]
-            print('Analysing '+ref_lipid)
+            print("IMPORTANT: First lipid entry used as reference - not reccomended to use sterols as the reference lipid as sites likely to differ from phospholipids.")
+            print('Reference lipid '+ref_lipid)
             ref_csv=pd.read_csv(f"{path}/Interaction_{ref_lipid}/Dataset_{ref_lipid}/Dataset.csv")
             BS_ref=ref_csv["Binding Site ID"].unique()
 
             for lipid in lip_list[1:]:
                 tmp_df=pd.DataFrame()
-                print('Analysing '+lipid)
+                print('Comparing '+lipid)
                 target_csv=pd.read_csv(f"{path}/Interaction_{lipid}/Dataset_{lipid}/Dataset.csv")
                 BS_target=target_csv["Binding Site ID"].unique()
 
@@ -42,23 +44,26 @@ def compare_sites(path, lip_list):
                         target_BS_count[int(target_site)]=res_count/len(ref_resid_list+target_resid_list)
 
                     t=max(target_BS_count.values())
+                    # Threshold set to 0.2 based on comparsion to manually assigned matching sites.
                     if t>0.2:
                          target_max_sites=[key for key, value in target_BS_count.items() if value==t]
                     else:
                          target_max_sites=["X"]
-                    #target_max_sites=[value for key, value in target_BS_count.items() if value==t]
 
                     df=pd.DataFrame({f"{ref_lipid}": ref_site,
                                     f"{lipid}": target_max_sites})
 
                     tmp_df=tmp_df.append(df, ignore_index=True)
-
                 match_sites=pd.concat([match_sites, tmp_df], axis=1)
 
             match_sites=match_sites.loc[:,~match_sites.columns.duplicated()]
-            print(match_sites)
             BS_ID_dict=match_sites.to_dict('list')
 
+            # Check for replicate matching sites for each lipid
+            for col in match_sites:
+                repeat=match_sites[col].replace('X', np.nan).dropna().duplicated().any()
+                if repeat=True:
+                    print(f"A binding site was assigned twice for {lipid} - check which site poses match best")
 
             print(BS_ID_dict)
         except Exception as e:
@@ -71,7 +76,7 @@ def compare_sites(path, lip_list):
     return BS_ID_dict
 
 
-def get_site_compare(lip_list):
+def get_site_compare(lip_list, BS_predict_dict):
     """
     Generate dictionary of lipid sites to compare in format: dict={"lipid":[list of site IDs]}.
     """
@@ -79,6 +84,8 @@ def get_site_compare(lip_list):
     print("Example:\nBindingSite_ID_dict={'POPC': [1, 2, 5, 3],\n\t'POPE': [2, 3, 6, 1],\n\t'CHOL':[1, 3, 5, 'X']}")
     print("\nThe residence time of sites are compared in the listed order \ne.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.")
     print("'X' denotes when an equivilent site does not exist.")
+
+    if BS_predict_dict:
 
     BS_ID_dict={}
     for idx, lipid in enumerate(lip_list):
