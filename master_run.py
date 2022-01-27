@@ -203,17 +203,21 @@ if input_step=="4":
 ### Section 5: Ranking site lipids ###
 ### USER DEFINED VARIABLES ###########
 ######################################
-BindingSite_ID_dict={"POPC": [1, 2 , 5, 3],     # Dictionary of lipids (keys) and a list of binding site indices (values) to compare. The residence time of
-          "POPE": [2, 3, 6, 1],                # sites are compared in the listed order e.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.
-          "CHOL":[1, 3, 5, "X"]}
+#BindingSite_ID_dict={"POPC": [1, 2 , 5, 3],     # Dictionary of lipids (keys) and a list of binding site indices (values) to compare. The residence time of
+#          "POPE": [2, 3, 6, 1],                # sites are compared in the listed order e.g. POPC site 1 is compared with POPE site 2 and CHOL site 1.
+#          "CHOL":[1, 3, 5, "X"]}
 
 #############################
 ### Section 5: CODE Below ###
 #############################
 ### Ranking site lipids ###
 if input_step=="5":
+    lip_list=lip_test.get_lipids(bilayer=None)
+    BS_predict_dict=rs.compare_sites(path, lip_list)
+    BindingSite_ID_dict=rs.get_site_compare(lip_list, BS_ID_dict=BS_predict_dict)
     rank_data=rs.get_BSstat(path, BindingSite_ID_dict)
     rs.plot_site_rank(path, BindingSite_ID_dict, rank_data)
+
 
 ###################################################
 ### Section 6: Setting up atomistic simulations ###
