@@ -15,6 +15,7 @@
 # 10-CG_simulation_time
 # 11-martinize2 path
 # 12-forcefield
+# 13-martini_maxwarn 
 
 cd ${9}
 echo ""
@@ -41,9 +42,9 @@ do
     #${6} ../python_files/martinize_gmx2019.py -f ${1} -o system.top -x protein_cg.gro -dssp ${7} -p backbone -ff elnedyn22 -cys auto -ef 1000 -el 0.5 -eu 0.9 -ea 0 -ep 0 >& output_files/martinize
 
     if [ ${12} != "martini_v3.0.0" ]; then
-      ${11} -f ${1} -o system.top -x protein_cg.gro -dssp ${7} -p backbone -ff elnedyn22 -cys auto -ef 1000 -el 0.5 -eu 0.9 -ea 0 -ep 0 >& output_files/martinize
+      ${11} -f ${1} -o system.top -x protein_cg.gro -dssp ${7} -p backbone -ff elnedyn22 -cys auto -ef 1000 -el 0.5 -eu 0.9 -ea 0 -ep 0 -maxwarn ${13} >& output_files/martinize
     else
-      ${11} -f ${1} -o system.top -x protein_cg.gro -dssp ${7} -p backbone -ff martini3001 -cys auto -ef 1000 -el 0.5 -eu 0.9 -ea 0 -ep 0 >& output_files/martinize
+      ${11} -f ${1} -o system.top -x protein_cg.gro -dssp ${7} -p backbone -ff martini3001 -cys auto -ef 1000 -el 0.5 -eu 0.9 -ea 0 -ep 0 -maxwarn ${13} >& output_files/martinize
     fi
 
     ${6} ../python_files/insane_mod.py -f protein_cg.gro -o system.gro  -pbc square -box ${4} -center -dm ${2} ${3} -sol W -p tmp.top

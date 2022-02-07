@@ -70,7 +70,7 @@ if input_step=="1a":
     print("\nDefine membrane composition.\nCan either select from predefined membrane compositions or define using insane.py syntax.")
     print("\nCurrent predefined membrane compositions available:\n['Gram neg. inner membrane', 'Gram neg. outer membrane','Plasma membrane', 'ER membrane', 'Raft-like microdomain', 'Simple']\n\nExample of custom bilayer composition (-u=upper leaflet, -l=lower leaflet):\n'-u POPC:50 -u DOPC:50 -l POPE:30 -l CHOL:10 -l DOPE:60'")
     membrane_composition=str(input("\nMembrane composition: "))
-
+    martini_maxwarn=int(input("Add maxwarn number for martinize2 (default: 0): ") or 0)
     CG_simulation_time=int(input("\nCoarse grain simulation time (in us) (default: 15): ") or 15)
     replicates=int(input("Number of replicates (default: 10): ") or 10)
 
@@ -89,7 +89,7 @@ if input_step=="1a":
     ps.system_setup(protocol_path, path)
     ps.fetch_CG_itp(forcefield, path)
     ps.top_header(forcefield, path)
-    ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield)
+    ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield, martini_maxwarn)
 #############################################
 ### PAUSE POINT - run the CG trajectories ###
 #############################################
