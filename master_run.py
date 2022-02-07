@@ -58,6 +58,7 @@ membrane_composition='Simple' # Define membrane composition.
 
 #membrane_composition='-u POPC:100 -l DOPC:100'
 martini_maxwarn=0 #Maxwarn number for martinize2 - can be useful for dealing with e.g. His or N/C term caps.
+ring_lipids="False" #True or False - use to place lipids inside protein
 CG_simulation_time=15 # time in us - recommended to simulate for at least 5us per replicate, ideally 10-15us
 replicates=2 # number of CG replicates
 stride=10 # Skip every X no. frame during trajectory processing and running PyLipID
@@ -84,7 +85,7 @@ if input_step=="1a":
     ps.system_setup(protocol_path, path)
     ps.fetch_CG_itp(forcefield, path)
     ps.top_header(forcefield, path)
-    ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield, martini_maxwarn)
+    ps.run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield, martini_maxwarn, ring_lipids)
 #############################################
 ### PAUSE POINT - run the CG trajectories ###
 #############################################

@@ -86,12 +86,12 @@ def top_header(forcefield, path):
             fn.write('#include "{}"\n'.format(itp))
 
 
-def run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield, martini_maxwarn):
+def run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield, martini_maxwarn, ring_lipids):
     """
     Run the setup of CG simulations calling the CG_simulation_setup.sh script.
     """
     protein_AT_full=os.path.join(os.getcwd(), protein_AT_full)
-    subprocess.check_call(["{}/simulation/CG_simulation_setup.sh".format(protocol_path), protein_AT_full, str(protein_shift), bilayer, boxsize, str(replicates), python3_path, dssp_path, str(n_cores), path, str(CG_simulation_time), martinize2_path, str(forcefield),str(martini_maxwarn)])
+    subprocess.check_call(["{}/simulation/CG_simulation_setup.sh".format(protocol_path), protein_AT_full, str(protein_shift), bilayer, boxsize, str(replicates), python3_path, dssp_path, str(n_cores), path, str(CG_simulation_time), martinize2_path, str(forcefield),str(martini_maxwarn), ring_lipids])
 
 def trjconv_CG(protocol_path, stride, replicates, path):
     """

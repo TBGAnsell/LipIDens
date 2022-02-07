@@ -16,6 +16,7 @@
 # 11-martinize2 path
 # 12-forcefield
 # 13-martini_maxwarn 
+# 14-ring_lipids
 
 cd ${9}
 echo ""
@@ -46,8 +47,12 @@ do
     else
       ${11} -f ${1} -o system.top -x protein_cg.gro -dssp ${7} -p backbone -ff martini3001 -cys auto -ef 1000 -el 0.5 -eu 0.9 -ea 0 -ep 0 -maxwarn ${13} >& output_files/martinize
     fi
-
-    ${6} ../python_files/insane_mod.py -f protein_cg.gro -o system.gro  -pbc square -box ${4} -center -dm ${2} ${3} -sol W -p tmp.top
+    
+    if [ ${14} == "True" ]; then
+        ${6} ../python_files/insane_mod.py -f protein_cg.gro -o system.gro  -pbc square -box ${4} -center -dm ${2} ${3} -sol W -p tmp.top -ring
+    else
+        ${6} ../python_files/insane_mod.py -f protein_cg.gro -o system.gro  -pbc square -box ${4} -center -dm ${2} ${3} -sol W -p tmp.top
+    fi
 
     sed -i '2d' system.top
     cat ../itp_files/top_header.txt system.top >out && mv out system.top
