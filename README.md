@@ -1,5 +1,7 @@
 # LipIDens - simulation assisted interpretation of lipid densities 
 
+![logo](lipidensAsset_logo4.pdf)
+
 LipIDens is a pipeline for simulation assisted interpretation of lipid or lipid-like densities in e.g. cryogenic electron microscopy (cryo-EM) structures of membrane proteins. The protocol can be used to establish CG simulations, analyse lipid binding sites using [PyLipID](https://github.com/wlsong/PyLipID), screen, rank and process [PyLipID](https://github.com/wlsong/PyLipID) outputs and establish atomistic simulations to refine lipid binding poses.
 
 LipIDens aims to guide the user from 'lipid-like' to 'lipid-site' to assist membrane protein structure interpretation. 
@@ -50,4 +52,8 @@ In addition, a jupyter notebook tutorial is provided to assist implementation (`
 Please cite the following if elements of the LipIDens protocol are used:
 
 Citation to follow. 
+
+
+
+The LipIDens logo was designed by Jess Ansell. 
 
