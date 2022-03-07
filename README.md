@@ -26,11 +26,8 @@ cd LipIDens
 python setup.py install
 ```
 
-LipIDens installation using pip (pending):
-```bash
-pip install lipidens
-```
-OLD:
+
+Conda (legacy installation):
 ```bash
 conda create -n LipIDens python=3.9
 pip install -r requirements.txt
