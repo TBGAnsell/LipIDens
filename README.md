@@ -55,5 +55,5 @@ Citation to follow.
 
 
 
-The LipIDens logo was designed by Jess Ansell. 
+The LipIDens logo was designed by Jessica Ansell. 
 

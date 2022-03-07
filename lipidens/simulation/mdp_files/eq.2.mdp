@@ -1,7 +1,7 @@
 ;define                   = -DPOSRES_FC
 integrator               = md    
 dt                       = 0.02  
-nsteps                   = 50000 ; 1 ns
+nsteps                   = 500000 ; 10 ns
 nstcomm                  = 100
 comm-grps		         = 
 

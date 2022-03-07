@@ -1,7 +1,7 @@
 define                   = -DPOSRES
 integrator               = md    
 dt                       = 0.005  
-nsteps                   = 50000 ; 0.25 ns
+nsteps                   = 200000 ; 1 ns
 nstcomm                  = 100
 comm-grps		         = 
 
