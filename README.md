@@ -42,7 +42,7 @@ LipIDens can be run using the standalone `lipidens_master_run.py` (user inputs v
 
 Select the required protocol stage when prompted. 
 
-In addition, a jupyter notebook tutorial is provided to assist implementation (`LipIDens_Protocol_jupyter_notebook.ipynb`). 
+In addition, a jupyter notebook tutorial is provided to assist implementation (`LipIDens.ipynb`). 
 
 ## Citation:
 
