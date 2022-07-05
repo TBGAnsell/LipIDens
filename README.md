@@ -46,9 +46,9 @@ In addition, a jupyter notebook tutorial is provided to assist implementation (`
 
 ## Citation:
 
-Please cite the following if elements of the LipIDens protocol are used:
+**Please cite** the following if elements of the LipIDens protocol are used:
 
-Ansell, T.B., Song, W., Coupland, C.E., Carrique, L., Corey, R.A., Duncan, A.L., Cassidy, C.K., Geurts, M.M.G., Rasmussen, T., Ward, A.B., Siebold, C., Stansfeld, P., Sansom, M.S.P. (2022). LipIDens: Simulation assisted interpretation of lipid densities in cryo-EM structures of membrane proteins. bioRxiv, [doi: 10.1101/2022.06.30.498233](https://www.biorxiv.org/content/10.1101/2022.06.30.498233v1)
+Ansell, T.B., Song, W., Coupland, C.E., Carrique, L., Corey, R.A., Duncan, A.L., Cassidy, C.K., Geurts, M.M.G., Rasmussen, T., Ward, A.B., Siebold, C., Stansfeld, P., Sansom, M.S.P. (2022). **LipIDens: Simulation assisted interpretation of lipid densities in cryo-EM structures of membrane proteins.** bioRxiv, [doi: 10.1101/2022.06.30.498233](https://www.biorxiv.org/content/10.1101/2022.06.30.498233v1)
 
 
 The LipIDens logo was designed by Jessica Ansell. 
