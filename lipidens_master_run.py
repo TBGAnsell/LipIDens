@@ -54,7 +54,7 @@ if input_step=="1a":
     print("\nPRESS ENTER FOR DEFAULTS")
     nprot=int(input("\nNumber of homomeric protein chains, for heteromers input '1' (default: 1): ") or 1)
     print("\nShift protein position in membrane to align TM region within the bilayer (value can also be negative).")
-    protein_shift=int(input("Protein shift e.g. 1.3 (default: 0): ") or 0)
+    protein_shift=float(input("Protein shift e.g. 1.3 (default: 0): ") or 0)
     print("\nRotate the protein position to align TM region within the bilayer (angle in x y z)")
     protein_rotate=str(input("Protein rotate (default: 0 90 0): ") or '0 90 0')
     boxsize=str(input("Simulation box size (nm) (default: 15,15,15): ") or '15,15,15')
