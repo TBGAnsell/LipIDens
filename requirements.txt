@@ -2,7 +2,7 @@ kneebow
 logomaker
 matplotlib>=3.3.4
 mdtraj
-networkx
+networkx=2.5
 numpy
 p-tqdm
 pandas
