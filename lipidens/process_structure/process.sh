@@ -9,7 +9,10 @@
 
 if [ "${1#*.}" = "pdb" ]; then input="${1%%.*}"; else echo "Check input file is in pdb format"; fi
 
-pdb2pqr30 --ff CHARMM --keep-chain ${input}.pdb prot_pqr.pdb >& gmx_tmp
+mkdir -p process_tmp
+cd process_tmp
+
+pdb2pqr30 --ff CHARMM --keep-chain ../${input}.pdb prot_pqr.pdb >& gmx_tmp
 
 gmx pdb2gmx -f prot_pqr.pdb -ignh -ff charmm27 -water tip3p -o prot_sol.pdb >& gmx_tmp
 
@@ -32,7 +35,9 @@ gmx trjconv -f prot_at_em_princ.pdb -o ${input}_princ.pdb -s em.tpr >& gmx_tmp<<
 0
 EOF
 
-
+cp ${input}_princ.pdb ../
 rm gmx_tmp
+cd ../
+rm -r process_tmp
 
-echo ${input}_princ.pdb
+if [[ -f ${input}_princ.pdb ]]; then echo ${input}_princ.pdb; fi
