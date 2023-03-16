@@ -140,6 +140,7 @@ def get_BSstat(path, site_dict):
                     "koff_diff": site_csv["koff_diff"].unique(),
                     "BS R Squared": site_csv["Binding Site R Squared"].unique(),
                     "BS Residence Time": site_csv["Binding Site Residence Time"].unique(),
+                    "BS Residence Time boot error": 1/site_csv["Binding Site Koff Bootstrap avg"].unique() - site_csv["Binding Site Residence Time"].unique(),
                     "BS Occupancy": site_csv["Binding Site Occupancy"].unique()})
                 elif site =="X":
                     df=pd.DataFrame({"Lipid": lipid,
@@ -148,6 +149,7 @@ def get_BSstat(path, site_dict):
                     "koff_diff": 0,
                     "BS R squared": 0,
                     "BS Residence Time": 0,
+                    "BS Residence Time boot": 0,
                     "BS Occupancy": 0})
                 else:
                     print(f"Binding Site ID {site} not recognised. Should be an integer or string 'X' for null site")
@@ -174,7 +176,8 @@ def plot_site_rank(path, site_dict, data):
         ax[0].set_xlabel("")
 
 
-        sns.barplot(x="Lipid", y="BS Residence Time", data=data_idx, ax=ax[1], palette="Set2")
+        #sns.barplot(x="Lipid", y="BS Residence Time", data=data_idx, ax=ax[1], palette="Set2")
+        ax[1].bar(x=data_idx["Lipid"],height=data_idx["BS Residence Time"], yerr=[np.zeros(len(data_idx["BS Residence Time boot error"])), data_idx["BS Residence Time boot error"]], color=sns.color_palette("Set2"))
         ax[1].set_ylabel(r"Residence Time ($\mu$s)")
         ax[1].set_xlabel("")
 
