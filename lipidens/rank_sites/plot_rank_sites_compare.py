@@ -5,7 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import operator
+import subprocess
+import shutil
 import numpy as np
+import warnings
+warnings.filterwarnings( "ignore")
 
 """
 
@@ -16,6 +20,22 @@ Author: TBG Ansell
 """
 
 def compare_sites(path, lip_list):
+    """
+    Create dictionary of predicted comparable binding sites for each lipid, against the reference lipid (first entry).
+    Comparable sites selected based on best match between comprising residues.
+
+    Params
+    ------
+    path: str
+        path
+    lip_list: list
+        lipid to compare
+
+    Returns
+    -------
+    BS_ID_dict: dict
+        predicted sites to compare as keys=lipid: values=binding sites in comparable order
+    """
     if len(lip_list)>1:
         try:
             # Compare lipid sites based on comprising residues. Comparison made for each lipid against the reference lipid (first lipid in list).
@@ -80,6 +100,19 @@ def compare_sites(path, lip_list):
 def get_site_compare(lip_list, BS_ID_dict):
     """
     Generate dictionary of lipid sites to compare in format: dict={"lipid":[list of site IDs]}.
+    Users can specify whether to accept the predicted matching sites or modify the prediction.
+
+    Params
+    -------
+    lip_list: list
+        lipids to compare
+    BS_ID_dict: dict
+        predicted comparable sites for each lipid
+
+    Returns
+    -------
+    BS_ID_dict: dict
+        unmodified or modified sites to compare as keys=lipids, values=comparable binidng sites (in order)
     """
     try:
         if BS_ID_dict:
@@ -122,6 +155,18 @@ def get_site_compare(lip_list, BS_ID_dict):
 def get_BSstat(path, site_dict):
     """
     Load binding site data for lipid sites in site_dict.
+
+    Params
+    ------
+    path: str
+        path
+    site_dict: dict
+        binding sites to compare
+
+    Returns
+    -------
+    data: pd.DaraFrame
+        kinetic parameters to plot in comparison
     """
     os.makedirs(os.path.join(path, "Lipid_compare"), exist_ok=True)
     data=pd.DataFrame()
@@ -164,6 +209,15 @@ def get_BSstat(path, site_dict):
 def plot_site_rank(path, site_dict, data):
     """
     Plot lipid residence times for corresponding sites by site index order in the site_dict[lipid] list.
+
+    Params
+    ------
+    path: str
+        path
+    site_dict: dict
+        binding sites to compare
+    data: pd.DataFrame
+        kinetic params for lipid sites
     """
     for i in range(0, max(len(v) for v  in site_dict.values())):
         data_idx=data[data["Site_Idx"]==i].reset_index()
@@ -221,12 +275,25 @@ def locate_density_path(path):
     sigma_factor=float(input("Sigma factor value to display map at (default: 10): ") or 10)
     return density_map, sigma_factor
 
-def backmap_poses(path, protocol_path, BS_ID_dict):
+def backmap_poses(path, protocol_path, BS_ID_dict, save_dir):
     """
-    Create directory - AT poses
-    For each binding site: 1) get lipid pose no, Get top ranked CG pose, CG2AT minimised pose
-    Bsckmap within the location of pose then move to loc and rename file
-    Returns location of backmapped poses
+    For each lipid and each pose in BS_ID_dict, backmap the lipid pose to atomistic detail (using CG2AT before equilibration i.e. lipid pose position unaltered comapred to CG pose). Put comparable poses in same location (within Density_Pose_Compare) where BS ID referens to the refernece lipid.
+
+    Params
+    ------
+    path: str
+        path
+    protocol_path: str
+        LipIDens path
+    BS_ID_dict: dict
+        Comparible binding poses for each lipid
+    save_dir: str
+        save directory
+
+    Returns
+    -------
+    dens_path: str
+        location of backmapped poses
     """
     dens_path=os.path.join(path, "Density_Pose_Compare")
     os.makedirs(dens_path, exist_ok=True)
@@ -234,32 +301,36 @@ def backmap_poses(path, protocol_path, BS_ID_dict):
 
     #establish reference lipid path to store comparable poses
     for site in list(BS_ID_dict.values())[0]:
-        os.makedirs(dens_path+f"./BS_ID_{site}")
+        os.makedirs(dens_path+f"/BS_ID_{site}", exist_ok=True)
 
-    if os.path.is_file(f"{path}/run1/martini_v2.2.itp"):
+    if os.path.isfile(f"{path}/run1/martini_v2.2.itp"):
         ff_type="martini_2-2_charmm36 martini_2-2_charmm36-VS"
-    elif os.path.is_file(f"{path}/run1/martini_v2.0.itp"):
+    elif os.path.isfile(f"{path}/run1/martini_v2.0.itp"):
         ff_type="martini_2-0_charmm36"
     else:
         ff_type="martini_3-0_charmm36 martini_3-0_charmm36-VS"
+    print("Selected forcefield for backmapping: ",ff_type)
 
     for lipid in BS_ID_dict:
         for idx, site in enumerate(BS_ID_dict[lipid]):
-            input_CG_frame=f"{path}/Interaction_{lipid}/Bound_Poses_{lipid}/BSidi{site}_rank/BSid{site}_top0.gro"
-            save_CG_frame_path=f"{path}/Interaction_{lipid}/Bound_Poses_{lipid}/BSidi{site}_rank/"
-            print("\nRunning CG2AT: {lipid} site pose {site}\n")
-            subprocess.check_call(["{}/rank_sites/run_CG2AT.sh".format(protocol_path), input_CG_frame, save_CG_frame_path, ff_type])
+            if site != 'X':
+                input_CG_frame=f"{path}/Interaction_{lipid}/Bound_Poses_{lipid}/BSid{site}_rank/BSid{site}_top0.gro"
+                save_CG_frame_path=f"{save_dir}/Interaction_{lipid}/Bound_Poses_{lipid}/BSid{site}_rank"
+                print(f"\nRunning CG2AT: {lipid} site pose {site}\n")
+                try:
+                    subprocess.check_call(["{}/rank_sites/run_CG2AT.sh".format(protocol_path), input_CG_frame, save_CG_frame_path, ff_type])
+                except subprocess.CalledProcessError as e:
+                    print(e.output)
+                    pass
 
-            #XXX - check in CG2AT crashes whole thing or just internally,
-            #check if CG2AT file created - only minised pose needed, move to correct loation are rename
-            if os.path.is_file(f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"):
-                print("CG2AT {lipid} pose {site} backmapped")
-                struc=f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"
-                shutil.copy(struc, dens_path+"./BS_ID_{}".format(list(BS_ID_dict.values())[0][idx]))
-            else:
-                print(f"CG2AT {lipid} {site} .pdb file not found - check whether backmap was successful")
-                pass
-
+                # get direct lipid backmapped pose (before equilibration) and move to directory for comparison
+                if os.path.isfile(f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"):
+                    print(f"CG2AT {lipid} pose {site} backmapped")
+                    struc=f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"
+                    shutil.copy(struc, dens_path+"/BS_ID_{}".format(list(BS_ID_dict.values())[0][idx]))
+                else:
+                    print(f"CG2AT {lipid} {site} .pdb file not found - check whether backmap was successful")
+                    pass
 
     return dens_path
 

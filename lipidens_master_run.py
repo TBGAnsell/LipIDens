@@ -214,7 +214,7 @@ if input_step=="5":
     rank_data=rs.get_BSstat(path, BindingSite_ID_dict)
     rs.plot_site_rank(path, BindingSite_ID_dict, rank_data)
     Dmap, Sfac=rs.locate_density_path(path)
-    dens_path=rs.backmap_poses(path, protocol_path, BindingSite_ID_dict)
+    dens_path=rs.backmap_poses(path, protocol_path, BindingSite_ID_dict, save_dir)
     rs.pymol_density_compare(path, Dmap, Sfac, dens_path, BindingSite_ID_dict)
 
 

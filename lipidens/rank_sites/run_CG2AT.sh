@@ -9,7 +9,7 @@
 
 cg2at=`which cg2at`
 if [ -f "${cg2at}" ]; then
-    ${cg2at} -c $1 -loc ${2}/CG2AT -w tip3p -o de_novo -ff charmm36 -fg ${3} 
+    ${cg2at} -c $1 -loc ${2}/CG2AT -w tip3p -o de_novo -ff charmm36-jul2020-updated -fg ${3} 
 else
     echo ${cg2at}
 fi
