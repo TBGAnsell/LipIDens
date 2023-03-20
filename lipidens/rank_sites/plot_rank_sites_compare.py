@@ -236,16 +236,32 @@ def backmap_poses(path, protocol_path, BS_ID_dict):
     for site in list(BS_ID_dict.values())[0]:
         os.makedirs(dens_path+f"./BS_ID_{site}")
 
+    if os.path.is_file(f"{path}/run1/martini_v2.2.itp"):
+        ff_type="martini_2-2_charmm36 martini_2-2_charmm36-VS"
+    elif os.path.is_file(f"{path}/run1/martini_v2.0.itp"):
+        ff_type="martini_2-0_charmm36"
+    else:
+        ff_type="martini_3-0_charmm36 martini_3-0_charmm36-VS"
+
     for lipid in BS_ID_dict:
         for idx, site in enumerate(BS_ID_dict[lipid]):
-            input_CG_frame=
-            save_CG_frame_path=
-            CG_forcefield=
+            input_CG_frame=f"{path}/Interaction_{lipid}/Bound_Poses_{lipid}/BSidi{site}_rank/BSid{site}_top0.gro"
+            save_CG_frame_path=f"{path}/Interaction_{lipid}/Bound_Poses_{lipid}/BSidi{site}_rank/"
             print("\nRunning CG2AT: {lipid} site pose {site}\n")
-            subprocess.check_call(["{}/rank_sites/run_CG2AT.sh".format(protocol_path), input_CG_frame, save_CG_frame_path, CG_forcefield])
-            #XXX - check in CG2AT crashes whole thing or just internally, check if CG2AT file created - only minised pose needed, move to correct loation are rename
+            subprocess.check_call(["{}/rank_sites/run_CG2AT.sh".format(protocol_path), input_CG_frame, save_CG_frame_path, ff_type])
 
-    return dens_path, pose_loc_path
+            #XXX - check in CG2AT crashes whole thing or just internally,
+            #check if CG2AT file created - only minised pose needed, move to correct loation are rename
+            if os.path.is_file(f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"):
+                print("CG2AT {lipid} pose {site} backmapped")
+                struc=f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"
+                shutil.copy(struc, dens_path+"./BS_ID_{}".format(list(BS_ID_dict.values())[0][idx]))
+            else:
+                print(f"CG2AT {lipid} {site} .pdb file not found - check whether backmap was successful")
+                pass
 
-def pymol_density_compare(path, density_map, sigma_factor, dens_path, pose_loc_path):
+
+    return dens_path
+
+def pymol_density_compare(path, density_map, sigma_factor, dens_path, BS_ID_dict):
     return
