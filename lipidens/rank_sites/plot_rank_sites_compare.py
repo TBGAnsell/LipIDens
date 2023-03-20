@@ -192,3 +192,60 @@ def plot_site_rank(path, site_dict, data):
         plt.close()
     print("\nSite comparison complete:", "{}/Lipid_compare".format(path))
     return
+
+def locate_density_path(path):
+    """
+    Check the input density file exists and get input sigma factor value.
+
+    Params
+    -------
+    path: str
+        path
+
+    Returns
+    -------
+    density map location and sigma factor
+    """
+    d_name=str(input("Density map file name: "))
+    if os.path.isfile(f"{path}/{d_name}"):
+        density_map=f"{path}/{d_name}"
+    else:
+        print(f"\n{path}/{d_name} not found.")
+        d_name=str(input("Define absolute path to density map file: "))
+        if os.path.isfile(f"{d_name}"):
+            density_map=d_name
+        else:
+            print("\n{d_name} not found.")
+            exit()
+
+    sigma_factor=float(input("Sigma factor value to display map at (default: 10): ") or 10)
+    return density_map, sigma_factor
+
+def backmap_poses(path, protocol_path, BS_ID_dict):
+    """
+    Create directory - AT poses
+    For each binding site: 1) get lipid pose no, Get top ranked CG pose, CG2AT minimised pose
+    Bsckmap within the location of pose then move to loc and rename file
+    Returns location of backmapped poses
+    """
+    dens_path=os.path.join(path, "Density_Pose_Compare")
+    os.makedirs(dens_path, exist_ok=True)
+    print("Location of lipid poses:", dens_path)
+
+    #establish reference lipid path to store comparable poses
+    for site in list(BS_ID_dict.values())[0]:
+        os.makedirs(dens_path+f"./BS_ID_{site}")
+
+    for lipid in BS_ID_dict:
+        for idx, site in enumerate(BS_ID_dict[lipid]):
+            input_CG_frame=
+            save_CG_frame_path=
+            CG_forcefield=
+            print("\nRunning CG2AT: {lipid} site pose {site}\n")
+            subprocess.check_call(["{}/rank_sites/run_CG2AT.sh".format(protocol_path), input_CG_frame, save_CG_frame_path, CG_forcefield])
+            #XXX - check in CG2AT crashes whole thing or just internally, check if CG2AT file created - only minised pose needed, move to correct loation are rename
+
+    return dens_path, pose_loc_path
+
+def pymol_density_compare(path, density_map, sigma_factor, dens_path, pose_loc_path):
+    return
