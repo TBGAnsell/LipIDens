@@ -9,8 +9,8 @@ import subprocess
 import shutil
 import numpy as np
 import re
-import pymol
-from pymol import cmd
+#import pymol
+#from pymol import cmd
 import warnings
 warnings.filterwarnings( "ignore")
 
@@ -395,7 +395,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
     
     # load residence time data for sites and scale spheres
     ref_lip=list(BS_ID_dict.keys())[0]
-    colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(max(BS_ID_dict[ref_lip]))])
+    colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(max(BS_ID_dict[ref_lip])+1)])
     print("Colours", colours, len(colours))
     
     if os.path.isfile(f"{path}/Interaction_{ref_lip}/Dataset_{ref_lip}/Dataset.csv"):
@@ -459,7 +459,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
     binding_site_identifiers = np.array(binding_site_identifiers, dtype=int)
     residue_identifiers = list(residue_identifiers)
 
-    for bs_id in np.arange(max(BS_ID_dict[ref_lip])):
+    for bs_id in np.arange(max(BS_ID_dict[ref_lip])+1):
         cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
         res_sel_list=[]
 
@@ -495,10 +495,9 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
         cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
 
         # binding site residues for density selection
-        # may need to modify for chains
         res_sel_list="+".join(res_sel_list)
         # generate density around site
-        cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", sigma_factor, selection=f"resid {res_sel_list}")
+        cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", sigma_factor, selection=f"resid {res_sel_list} around 5")
         
         cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
         cmd.hide("cartoon", f"BS_ID_{bs_id}")
