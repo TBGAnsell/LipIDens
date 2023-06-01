@@ -10,6 +10,18 @@ Basic function for establishing paths of simulation data.
 def setup(protocol_path, save_dir=None):
     """
     Establish save directory for simulations and data.
+
+    Params:
+    -------
+    protocol_path: str
+        path to LipIDens
+    save_dir: str
+        input custom directory name to store data
+    
+    Returns:
+    --------
+    path: str
+        path to location of LipIDens generated data
     """
     if save_dir is None:
         path=os.getcwd()
@@ -25,6 +37,11 @@ def setup(protocol_path, save_dir=None):
 def run_type():
     """
     Choose protocol stage to inititate.
+
+    Returns:
+    --------
+    input_step: str
+        selected stage number of protocol
     """
     steps_d={"1a": "Setup coarse-grained simulations",
              "1b": "Process coarse-grained trajectories",
@@ -51,6 +68,18 @@ def param_check(input_dict, step_str):
     """
     Take a dictionary of default values and loop through changing values based on user input.
     dict={ID number: [variable, value, description, type]}
+
+    Params:
+    -------
+    input_dict: dict
+        parameters to change and/or confirm
+    step_str: str
+        description of step
+    
+    Returns:
+    --------
+    input_dict: dict
+        modfied parameters
     """
     print(f"\nDefault variables for {step_str}")
     print(*[f"\n{key}: {val[2]}\n\t{val[0]}: {val[1]}\n" for key, val in input_dict.items()])

@@ -15,6 +15,20 @@ import zipfile
 def get_py_paths(protocol_path):
     """
     Establish python3 and dssp paths used as input for CG_simulation_setup.sh under run_CG(). Calls the bash script simulation/get_paths.sh.
+    
+    Params:
+    -------
+    protocol_path: str
+        protocol path
+
+    Returns:
+    --------
+    python3_path: str
+        path to python3 environment 
+    dssp_path: str
+        path to dssp package
+    martinize2_path: str
+        path to martinize
     """
     python3_path=subprocess.check_output(['{}/simulation/get_paths.sh'.format(protocol_path), 'python']).decode(sys.stdout.encoding).strip()
     dssp_path=subprocess.check_output(['{}/simulation/get_paths.sh'.format(protocol_path), 'dssp']).decode(sys.stdout.encoding).strip()
@@ -25,6 +39,13 @@ def get_py_paths(protocol_path):
 def system_setup(protocol_path, path):
     """
     Establish directories and files needed for CG simulations.
+
+    Params:
+    -------
+    protocol_path: str
+        protocol path
+    path: str
+        path
     """
     print("Location of CG simulations:", path)
 
@@ -37,6 +58,13 @@ def system_setup(protocol_path, path):
 def fetch_CG_itp(forcefield, path):
     """
     Get CG martini .itp files from martini website for Martini2.2.
+
+    Params:
+    -------
+    forcefield: str
+        select CG forcefield type
+    path: str
+        path
     """
     if forcefield in ["martini_v2.0", "martini_v2.1", "martini_v2.2"]:
         urllib.request.urlretrieve("http://cgmartini.nl/images/parameters/ITP/{}.itp".format(forcefield), "{}/itp_files/{}.itp".format(path, forcefield))
@@ -55,6 +83,16 @@ def fetch_CG_itp(forcefield, path):
 def bilayer_select(bilayer):
     """
     Select bilayer composition from either predefined selection (bilayer_type_dict) or inputted by the user in insane.py format.
+    
+    Params:
+    -------
+    bilayer: str
+        input bilayer composition
+
+    Returns:
+    --------
+    bilayer: str
+        bilayer composition in insane format    
     """
     bilayer_type = {"Gram neg. inner membrane": "-u POPE:67 -u POPG:23 -u CDL2:10 -l POPE:67 -l POPG:23 -l CDL2:10",
     "Gram neg. outer membrane": "-u PGIN:100 -l POPE:90 -l POPG:5 -l CDL2:5",
@@ -76,6 +114,13 @@ def bilayer_select(bilayer):
 def top_header(forcefield, path):
     """
     Make topology file header in preparation for running the CG simulations.
+
+    Params:
+    -------
+    forcefield: str
+        CG forcefield type
+    path: str
+        path
     """
     itp_list=[i for i in os.listdir('{}/itp_files'.format(path)) if i.endswith('.itp')]
     itp_list.remove("{}.itp".format(forcefield))
@@ -89,6 +134,39 @@ def top_header(forcefield, path):
 def run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, replicates, python3_path, dssp_path, n_cores, path, CG_simulation_time, martinize2_path, forcefield, martini_maxwarn, ring_lipids):
     """
     Run the setup of CG simulations calling the CG_simulation_setup.sh script.
+    
+    Params:
+    -------
+    protocol_path: str
+        path to LipIDens
+    protein_AT_full: str
+        protein coordinate file
+    protein_shift: float
+        value to shift protein position in Z
+    bilayer: str
+        bilayer composition in insane format
+    boxsize: str
+        box size in X,Y,Z
+    replicates: int
+        number of replicates
+    python3_path: str
+        path to python3 environment
+    dssp_path: str
+        path to dssp package
+    n_cores: int
+        number of cores
+    path: str
+        path
+    CG_simulation_time: int
+        CG simulation time in us
+    martinize2_path: str
+        path to martinize2
+    forcefield: str
+        forcefield type
+    martini_maxwarn: int
+        maxwarn number for martinize2
+    ring_lipids: bool
+        ring lipids around/within the protein     
     """
     protein_AT_full=os.path.join(os.getcwd(), protein_AT_full)
     subprocess.check_call(["{}/simulation/CG_simulation_setup.sh".format(protocol_path), protein_AT_full, str(protein_shift), bilayer, boxsize, str(replicates), python3_path, dssp_path, str(n_cores), path, str(CG_simulation_time), martinize2_path, str(forcefield),str(martini_maxwarn), ring_lipids])
@@ -96,6 +174,17 @@ def run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, repl
 def trjconv_CG(protocol_path, stride, replicates, path):
     """
     Basic processing of CG simulations using trjconv commands in CG_simulation_process.sh.
+
+    Params:
+    -------
+    protocol_path: str
+        path to LipIDens
+    stride: int
+        skip X number of frames during trajectory processing
+    replicates: int
+        number of replicates
+    path: str
+        path
     """
     subprocess.check_call(["{}/simulation/CG_simulation_process.sh".format(protocol_path), str(stride), str(replicates), path])
 
@@ -106,6 +195,17 @@ def trjconv_CG(protocol_path, stride, replicates, path):
 def CG2AT(protocol_path, protein_AT_full, input_CG_frame, path):
     """
     Run CG2AT using atomistic structure and provided frame from CG simulations.
+
+    Params:
+    -------
+    protocol_path: str
+        path to LipIDens
+    protein_AT_full: str
+        protein coordinate file
+    input_CG_frame: str
+        CG coordinate file for backmapping
+    path: str
+        path
     """
     print("\nRunning CG2AT\n")
     subprocess.check_call(["{}/simulation/run_CG2AT.sh".format(protocol_path), protein_AT_full, input_CG_frame, path])
@@ -114,6 +214,20 @@ def CG2AT(protocol_path, protein_AT_full, input_CG_frame, path):
 def system_setup_AT(protocol_path, path, model_type):
     """
     Check whether CG2AT produced all files needed for AT simulations (.itp and .pdb). Establish directories and files needed for AT simulations.
+    
+    Params:
+    -------
+    protocol_path: str
+        path to LipIDens
+    path: str
+        path
+    model_type: str
+        de nove or aligned structure
+
+    Returns:
+    --------
+    AT_path: str
+        path to atomistic simulations
     """
     AT_path=os.path.join(path, "Atomistic_Sims")
     os.makedirs(AT_path, exist_ok=True)
@@ -174,6 +288,17 @@ def system_setup_AT(protocol_path, path, model_type):
 def run_AT(AT_path, replicates_AT, protocol_path, AT_simulation_time):
     """
     Run the setup of AT simulations calling the AT_simulation_setup.sh script. Output is md.tpr file ready for simulation.
+    
+    Params:
+    -------
+    AT_path: str
+        path to atomistic simulations
+    replicates_AT: int
+        number of atomistic replicates
+    protocol_path: str
+        path to LipIDens
+    AT_simulation_time: int
+        atomistic simulation time in ns
     """
 
     subprocess.check_call(["{}/simulation/AT_simulation_setup.sh".format(protocol_path), str(replicates_AT), AT_path, str(AT_simulation_time)])

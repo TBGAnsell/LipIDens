@@ -15,6 +15,20 @@ Author: Wanling Song
 def get_trajectories(path, replicates):
     """
     Load trajectory list to be analysed using PyLipID.
+
+    Params:
+    -------
+    path: str
+        path
+    replicates: int
+        number of replicates
+
+    Returns:
+    --------
+    trajfile_list: list of str
+        paths to simulation xtc files
+    topfile_list: list of str
+        paths to corresponding coordinate files
     """
     trajfile_list=[]
     topfile_list=[]
@@ -57,6 +71,55 @@ def get_trajectories(path, replicates):
 def run_pylipid(trajfile_list, topfile_list, dt_traj, stride,  lipid, lipid_atoms, cutoffs, nprot, binding_site_size,
     n_top_poses, n_clusters, save_dir, save_pose_format, save_pose_traj, save_pose_traj_format, timeunit, resi_offset,
      radii, pdb_file_to_map, fig_format, num_cpus):
+    """
+    Run PyLipID LipidInteraction analysis class to calculate e.g. interactions, kinetic parameters, bound poses with specified lipid.  
+    See https://pylipid.readthedocs.io/en/master/index.html for PyLipID documentation. 
+
+    Params:
+    -------
+    trajfile_list: list of str
+        paths to simulation xtc files
+    topfile_list: list of str
+        paths to corresponding coordinate files
+    dt_traj: str
+        timestep information for trajectory
+    stride: int
+        skip every X number of frames
+    lipid: str
+        lipid
+    lipid_atoms: str
+        lipid atoms
+    cutoffs: list of float
+        lower and upper cutoffs
+    nprot: int
+        number of protein subunits
+    binding_site_size: int
+        minimum number of residues to include in binding site
+    n_top_poses: int
+        output X number of top ranked poses
+    n_clusters: int or str
+        automatically calculate or output X number of pose clusters
+    save_dir: str
+        save directory
+    save_pose_format: str
+        pose coordinate file format
+    save_pose_traj: bool
+        save bound poses
+    save_pose_traj_format: str
+        pose trajectory file format
+    timeunit: str
+        units of time
+    resi_offset: int
+        residue offset inex number
+    radii: dict
+        radii of non-standard protein atoms/beads as {atom_name: radius}
+    pdb_file_to_map: str
+        atomistic coordinate file for site mapping
+    fig_format: str
+        figure save format
+    num_cpus: int
+        number of cpus
+    """
     li = LipidInteraction(trajfile_list, topfile_list=topfile_list, cutoffs=cutoffs, lipid=lipid,
                           lipid_atoms=lipid_atoms, nprot=1, resi_offset=resi_offset,
                           timeunit=timeunit, save_dir=save_dir, stride=stride, dt_traj=dt_traj)

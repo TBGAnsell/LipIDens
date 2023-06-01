@@ -16,6 +16,17 @@ Author: TBG Ansell
 def get_data(path, lipid):
     """
     Generate summary of binding site data as csv.
+
+    Params:
+    -------
+    path: str
+        path
+    lipid: str
+        lipid
+    Returns:
+    --------
+    data: pandas.DataFrame()
+        summary of lipid interaction data per binding site
     """
     ### Load the basic data ###
     # All data #
@@ -39,6 +50,15 @@ def get_data(path, lipid):
 def plot_screen_data(data, path, lipid):
     """
     Generate plot of screened site data in site order.
+
+    Params:
+    -------
+    data: pandas.DataFrame()
+        summary of lipid interaction data per binding site
+    path: str
+        path
+    lipid: str
+        lipid
     """
     # BS categories to plot #
     BS_cats={"koff_diff": r"$\Delta$$k_{off}$",

@@ -27,6 +27,16 @@ import pickle
 def get_lipids(bilayer):
     """
     Extract lipid names from inputted bilayer.
+
+    Params:
+    -------
+    bilayer: str
+        bilayer composition
+    
+    Returns:
+    --------
+    lip_list: list
+        lipids in bilayer
     """
     if bilayer !=None:
         lip_list=list(set(re.findall(r'\w[A-Z0-9]{2,}', bilayer)))
@@ -42,6 +52,16 @@ def get_lipids(bilayer):
 def load_traj(path):
     """
     Load single trajectory used for obtaining lipid probability distribution.
+    
+    Params:
+    -------
+    path: str
+        path
+    
+    Returns:
+    --------
+    traj: mdtraj trajectorymd.Trajectory
+        trajectory
     """
     xtc_def="md_stride.xtc"
     top_def="md_stride_firstframe.gro"
@@ -93,6 +113,18 @@ def load_traj(path):
 def set_lipid(path, lipid):
     """
     Establish save directory of cut-off test data.
+
+    Params:
+    -------
+    path: str
+        path
+    lipid: str
+        lipid
+    
+    Returns:
+    --------
+    fig_dir: str
+        figure storage directory
     """
     save_dir = "{}/PyLipID_cutoff_test_{}".format(path, lipid)
     fig_dir = check_dir(save_dir, "Figures", print_info=False)
@@ -101,6 +133,17 @@ def set_lipid(path, lipid):
 def plot_minimum_distances(distances, times, title, fn):
     """
     Plot the per residue minimum distance to individual lipids.
+
+    Params:
+    -------
+    distances: array-like
+        distances
+    times: array-like
+        times 
+    title: str
+        title
+    fn: str
+        file name
     """
     fig, ax = plt.subplots(1, 1, figsize=(3, 2.5))
     ax.plot(times, distances)
@@ -119,6 +162,28 @@ def compute_minimum_distance(traj, lipid, fig_dir, nprot, lipid_atoms=None,
     """
     Obtain minimum distances of specified lipid to each residue in the protein if contact comes within distance_threshold
     for longer than the number of contact_frames.
+
+    Params:
+    -------
+    traj: mdtraj trajectorymd.Trajectory
+        trajectory
+    lipid: str
+        lipid
+    fig_dir: str
+        figure storage directory
+    nprot: int
+        number of protein subunits
+    lipid_atoms: list of str
+        lipid atoms to test
+    contact_frames: int 
+        minimum number of frames to consider a contact within distance_threshold
+    distance_threshold: float
+        distance cutoff for contact plots
+    
+    Returns:
+    --------
+    distance_set: array-like
+        distance contact matrix
     """
     DIST_CONTACT_ALL = []
     traj_info, _, _ = get_traj_info(traj, lipid, lipid_atoms=lipid_atoms)
@@ -142,6 +207,17 @@ def compute_minimum_distance(traj, lipid, fig_dir, nprot, lipid_atoms=None,
 def plot_PDF(distance_set, num_of_bins, fn, lipid):
     """
     Plot the probability distribution of minimum lipid distances.
+
+    Params:
+    -------
+    distance_set: array-like
+        distance contact matrix
+    num_of_bins: int
+        number of histogram bins
+    fn: str
+        filename
+    lipid: str
+        lipid
     """
     fig, ax = plt.subplots(1,1, figsize=(4,3))
     ax.hist(distance_set, bins=num_of_bins, density=True, color='lightcoral')
@@ -161,6 +237,36 @@ def test_cutoffs(cutoff_list, trajfile_list, topfile_list, lipid, lipid_atoms, n
     """
     Perform exhaustive cut-off testing by calculating the number of binding sites, average duration and number of contacting residues
     for each pair of cut-offs in the cut-off list.
+
+    Params:
+    -------
+    cutoff_list: list
+        cutoff pairs to test
+    trajfile_list: list
+        trajectories to analyse
+    topfile_list: list
+        coordinate files 
+    lipid: str
+        lipid
+    lipid_atoms: list
+        lipid atoms to use in contact calculation
+    nprot: int
+        number of protein subunits
+    stride: int
+        frames to skip during analysis
+    save_dir: str
+        save directory
+    timeunit: str
+        time unit
+
+    Returns:
+    --------
+    num_of_binding_sites: dict
+        {cutoff pair: number of binding sites}
+    duration_avgs: dict
+        {cutoff pair: average interaction duration}
+    num_of_contacting_residues: dict
+        {cutoff pair: total number of interacting residues}
     """
     num_of_binding_sites = {}
     duration_avgs = {}
@@ -184,6 +290,26 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
     """
     Obtain list of cut-off pairs to use for exhaustive cut-off testing using user specified lower and upper cut-off lists.
     Load all coarse-grain trajectories to test.
+
+    Params:
+    -------
+    path: str
+        path
+    lower_cutoff: list of float
+        lower cutoff values to test
+    upper_cutoff: list of float
+        upper cutoff values to test
+    replicates: int
+        number of replicates
+
+    Returns:
+    --------
+    cutoff_list: list
+        cutoff pairs to test as list of float
+    trajfile_list: list of str
+        trajectories to analyse
+    topfile_list: list of str
+        coordinate files
     """
     print("\nInitiating exhastive cut-off search:\n")
     print("Lower cut-offs to test:", lower_cutoff)
@@ -230,6 +356,21 @@ def exhaustive_search_setup(path, lower_cutoff, upper_cutoff, replicates):
 def ex_data_process(path, lipid, num_of_binding_sites, duration_avgs, num_of_contacting_residues, cutoff_list):
     """
     Process output data from PyLipID (num_binding_sites, duration_avgs, num_of_contacting_residues). Save in pickle format.
+    
+    Params:
+    -------
+    path: str
+        str
+    lipid: str
+        lipid
+    num_of_binding_sites: dict
+        {cutoff pair: number of binding sites}
+    duration_avgs: dict
+        {cutoff pair: average interaction duration}
+    num_of_contacting_residues: dict
+        {cutoff pair: total number of interacting residues}
+    cutoff_list: list
+        cutoff pairs to test as list of float
     """
     test_data = {"num_of_binding_sites": num_of_binding_sites,
              "duration_avgs": duration_avgs,
@@ -241,6 +382,19 @@ def ex_data_process(path, lipid, num_of_binding_sites, duration_avgs, num_of_con
 def graph(cutoff_list, metric_values, ylabel, title, fn):
     """
     Plot the data from the exhaustive cut-off testing.
+
+    Parmas:
+    -------
+    cutoff_list: list
+        cutoff pairs to test as list of float
+    metric_values: float
+        values to plot
+    ylabel: str
+        y label
+    title: str 
+        title
+    fn: str
+        file name
     """
     fig, ax = plt.subplots(1, 1, figsize=(len(cutoff_list)*0.42, 3.6))
     ax.scatter(np.arange(len(cutoff_list)), metric_values, s=50, color='lightcoral')
