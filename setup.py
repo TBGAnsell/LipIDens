@@ -61,6 +61,7 @@ setup(
       'statsmodels',
       'tqdm',
       'vermouth>=0.7.2',
+      'pymol>=1.9.0.0'
       ],
   classifiers=[
     'Development Status :: 5 - Production/Stable',
