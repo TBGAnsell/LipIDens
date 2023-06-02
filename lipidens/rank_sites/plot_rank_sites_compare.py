@@ -9,8 +9,6 @@ import subprocess
 import shutil
 import numpy as np
 import re
-#import pymol
-#from pymol import cmd
 import warnings
 warnings.filterwarnings( "ignore")
 
@@ -355,7 +353,7 @@ def backmap_poses(path, protocol_path, BS_ID_dict, save_dir):
 
 def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens_path, BS_ID_dict):
     """
-    Generate a pymol session comparing top ranked lipid binding poses for each site with densities in proximity to predicted sites. 
+    Generate a pymol script comparing top ranked lipid binding poses for each site with densities in proximity to predicted sites. 
     For each site, backmapped top ranked lipid binding poses are loaded and aligned. Residues for each site are shown as spheres scaled
     by the predicted residence times. The density map is segmented in proximity to each predicted lipid binding site (using the given
     sigma factor) for comparison with lipid poses. 
@@ -379,131 +377,155 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
    
     """
     
-    print(path)
-    print(dens_path)
-    p_name="Protein"
-    pymol.finish_launching()
-    cmd.set("retain_order",1)
-    #load and map sites
-    cmd.load(protein_AT_full, p_name)
-    cmd.load(density_map, "Density_map")
-    cmd.hide("everything")
-    cmd.show("cartoon", p_name)
-    cmd.color("white", p_name)
-    cmd.set("stick_radius", 0.5)
+    r_lip=list(BS_ID_dict.keys())[0]
+    r_num_of_sites=max(BS_ID_dict[r_lip])
 
-    
-    # load residence time data for sites and scale spheres
-    ref_lip=list(BS_ID_dict.keys())[0]
-    colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(max(BS_ID_dict[ref_lip])+1)])
-    print("Colours", colours, len(colours))
-    
-    if os.path.isfile(f"{path}/Interaction_{ref_lip}/Dataset_{ref_lip}/Dataset.csv"):
-        ref_lip_csv=f"{path}/Interaction_{ref_lip}/Dataset_{ref_lip}/Dataset.csv"
+    if os.path.isfile(f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"):
+        ref_lip_csv=f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"
     else:
         print("Unable to locate interaction dataset for reference lipid.")
-        rlipcsv=str(input("Provide absolute path to Dataset.csv file for {ref_lip}: "))
+        rlipcsv=str(input("Provide absolute path to Dataset.csv file for {r_lip}: "))
         if os.path.isfile(rlipcsv):
             ref_lip_csv=rlipcsv
         else:
             print("\n{rlipcsv} not found.")
             exit()
 
-    with open(ref_lip_csv, "r") as f:
-        data_lines = f.readlines()
 
-    column_names = data_lines[0].strip().split(",")
-    for column_idx, column_name in enumerate(column_names):
-        if column_name == "Residue":
-            column_id_residue_list = column_idx
-        elif column_name == "Residue ID":
-            column_id_residue_index = column_idx
-        elif column_name == "Binding Site ID":
-            column_id_BS = column_idx
-        elif column_name == "Residence Time":
-            column_id_value_to_show = column_idx
+    t=f"""
+#!/usr/bin/env python3
 
-    residue_list = []
-    residue_rank_set = []
-    binding_site_identifiers = []
-    values_to_show = []
-    for line in data_lines[1:]:
-        data_list = line.strip().split(",")
-        residue_list.append(data_list[column_id_residue_list])
-        residue_rank_set.append(data_list[column_id_residue_index])
-        binding_site_identifiers.append(float(data_list[column_id_BS]))
-        values_to_show.append(data_list[column_id_value_to_show])
+import os
+import numpy as np
+import re
+from pymol import cmd
+#cmd.reinitialize()
 
-    with open(protein_AT_full, "r") as f:
-        pdb_lines = f.readlines()
-    residue_identifiers = []
-    for line in pdb_lines:
-        line_stripped = line.strip()
-        if line_stripped[:4] == "ATOM":
-            identifier = (line_stripped[22:26].strip(), line_stripped[17:20].strip(), line_stripped[21].strip())
-    #                           residue index,              resname,                     chain id
-            if len(residue_identifiers) == 0:
-                residue_identifiers.append(identifier)
-            elif identifier != residue_identifiers[-1]:
-                residue_identifiers.append(identifier)
+p_name="Protein"
+cmd.set("retain_order",1)
+#load and map sites
+cmd.load("{protein_AT_full}", p_name)
+cmd.load("{density_map}", "Density_map")
+cmd.hide("everything")
+cmd.show("cartoon", p_name)
+cmd.color("white", p_name)
+cmd.set("stick_radius", 0.5)
+ref_lip="{r_lip}"
+ref_num_of_sites={r_num_of_sites}
+dens_path="{dens_path}"
+sigma_factor={sigma_factor}
 
-    # set sphere scales 
-    values_to_show = np.array(values_to_show, dtype=float)
-    MIN = np.percentile(np.unique(values_to_show), 5)
-    MAX = np.percentile(np.unique(values_to_show), 100)
-    X = (values_to_show - np.percentile(np.unique(values_to_show), 50))/(MAX - MIN)
-    SCALES = 1/(0.5 + np.exp(-X * 5))
+
+# load residence time data for sites and scale spheres
+colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(ref_num_of_sites+1)])
+print("Colours", colours, len(colours))
+
+
+
+with open("{ref_lip_csv}", "r") as f:
+    data_lines = f.readlines()
+
+column_names = data_lines[0].strip().split(",")
+for column_idx, column_name in enumerate(column_names):
+    if column_name == "Residue":
+        column_id_residue_list = column_idx
+    elif column_name == "Residue ID":
+        column_id_residue_index = column_idx
+    elif column_name == "Binding Site ID":
+        column_id_BS = column_idx
+    elif column_name == "Residence Time":
+        column_id_value_to_show = column_idx
+
+residue_list = []
+residue_rank_set = []
+binding_site_identifiers = []
+values_to_show = []
+for line in data_lines[1:]:
+    data_list = line.strip().split(",")
+    residue_list.append(data_list[column_id_residue_list])
+    residue_rank_set.append(data_list[column_id_residue_index])
+    binding_site_identifiers.append(float(data_list[column_id_BS]))
+    values_to_show.append(data_list[column_id_value_to_show])
+
+with open("{protein_AT_full}", "r") as f:
+    pdb_lines = f.readlines()
+residue_identifiers = []
+for line in pdb_lines:
+    line_stripped = line.strip()
+    if line_stripped[:4] == "ATOM":
+        identifier = (line_stripped[22:26].strip(), line_stripped[17:20].strip(), line_stripped[21].strip())
+#                           residue index,              resname,                     chain id
+        if len(residue_identifiers) == 0:
+            residue_identifiers.append(identifier)
+        elif identifier != residue_identifiers[-1]:
+            residue_identifiers.append(identifier)
+
+# set sphere scales 
+values_to_show = np.array(values_to_show, dtype=float)
+MIN = np.percentile(np.unique(values_to_show), 5)
+MAX = np.percentile(np.unique(values_to_show), 100)
+X = (values_to_show - np.percentile(np.unique(values_to_show), 50))/(MAX - MIN)
+SCALES = 1/(0.5 + np.exp(-X * 5))
+
+    """
+
+    t+=r"""
+
+residue_list = np.array(residue_list, dtype=str)
+residue_rank_set = np.array(residue_rank_set, dtype=int)
+binding_site_identifiers = np.array(binding_site_identifiers, dtype=int)
+residue_identifiers = list(residue_identifiers)
+
+for bs_id in np.arange(ref_num_of_sites+1):
+    cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
+    res_sel_list=[]
+
+    # load and align top ranked lipid binding poses
+    fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
+    for fle in fle_lst:
+        print(fle[:-4])
+        cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
+        cmd.cealign(target=p_name, mobile=fle[:-4])
+
+    for entry_id in np.where(binding_site_identifiers == bs_id)[0]:
+        selected_residue = residue_list[entry_id]
+        selected_residue_rank = residue_rank_set[entry_id]
+        identifier_from_pdb = residue_identifiers[selected_residue_rank]
+        if re.findall("[a-zA-Z]+$", selected_residue)[0] != identifier_from_pdb[1]:
+            raise IndexError(
+            "The {}th residue in the provided pdb file ({}{}) is different from that in the simulations ({})!".format(
+                                                                                            entry_id+1,
+                                                                                            identifier_from_pdb[0],
+                                                                                            identifier_from_pdb[1],
+                                                                                            selected_residue)
+                                                                                            )
+        if identifier_from_pdb[2] != " ":
+            cmd.select(f"BSid{bs_id}_{selected_residue}",
+            f"chain {identifier_from_pdb[2]} and resid {identifier_from_pdb[0]} and (not name C+O+N)")
+            res_sel_list.append(identifier_from_pdb[0])
+        else:
+            cmd.select(f"BSid{bs_id}_{selected_residue}",
+            f"resid {identifier_from_pdb[0]} and (not name C+O+N)")
+            res_sel_list.append(identifier_from_pdb[0])
+        cmd.show("spheres", f"BSid{bs_id}_{selected_residue}")
+        cmd.set("sphere_scale", SCALES[entry_id], selection=f"BSid{bs_id}_{selected_residue}")  
+        cmd.color(f"tmp_{bs_id}", f"BSid{bs_id}_{selected_residue}")
+    cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
+
+    # binding site residues for density selection
+    res_sel_list="+".join(res_sel_list)
+    # generate density around site
+    cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"resid {res_sel_list} around 5")
     
-    residue_list = np.array(residue_list, dtype=str)
-    residue_rank_set = np.array(residue_rank_set, dtype=int)
-    binding_site_identifiers = np.array(binding_site_identifiers, dtype=int)
-    residue_identifiers = list(residue_identifiers)
+    cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
+    cmd.hide("cartoon", f"BS_ID_{bs_id}")
+    cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
+cmd.center(p_name)
 
-    for bs_id in np.arange(max(BS_ID_dict[ref_lip])+1):
-        cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
-        res_sel_list=[]
+# save session
+cmd.save(f"{dens_path}/Lipid_poses_density_compare.pse")
+    """
+    with open(f"{dens_path}/Lipid_poses_density_compare.py", "w+") as f:
+        f.write(t)
 
-        # load and align top ranked lipid binding poses
-        fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
-        for fle in fle_lst:
-            cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
-            cmd.cealign(p_name, fle[:-4])
-
-        for entry_id in np.where(binding_site_identifiers == bs_id)[0]:
-            selected_residue = residue_list[entry_id]
-            selected_residue_rank = residue_rank_set[entry_id]
-            identifier_from_pdb = residue_identifiers[selected_residue_rank]
-            if re.findall("[a-zA-Z]+$", selected_residue)[0] != identifier_from_pdb[1]:
-                raise IndexError(
-                "The {}th residue in the provided pdb file ({}{}) is different from that in the simulations ({})!".format(
-                                                                                                entry_id+1,
-                                                                                                identifier_from_pdb[0],
-                                                                                                identifier_from_pdb[1],
-                                                                                                selected_residue)
-                                                                                                )
-            if identifier_from_pdb[2] != " ":
-                cmd.select(f"BSid{bs_id}_{selected_residue}",
-                f"chain {identifier_from_pdb[2]} and resid {identifier_from_pdb[0]} and (not name C+O+N)")
-                res_sel_list.append(identifier_from_pdb[0])
-            else:
-                cmd.select(f"BSid{bs_id}_{selected_residue}",
-                f"resid {identifier_from_pdb[0]} and (not name C+O+N)")
-                res_sel_list.append(identifier_from_pdb[0])
-            cmd.show("spheres", f"BSid{bs_id}_{selected_residue}")
-            cmd.set("sphere_scale", SCALES[entry_id], selection=f"BSid{bs_id}_{selected_residue}")  
-            cmd.color(f"tmp_{bs_id}", f"BSid{bs_id}_{selected_residue}")
-        cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
-
-        # binding site residues for density selection
-        res_sel_list="+".join(res_sel_list)
-        # generate density around site
-        cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", sigma_factor, selection=f"resid {res_sel_list} around 5")
-        
-        cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
-        cmd.hide("cartoon", f"BS_ID_{bs_id}")
-        cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
-    cmd.center(p_name)
-
-    # save session
-    cmd.save(f"{dens_path}/Lipid_poses_density_compare.pse")
     return
