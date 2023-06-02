@@ -14,4 +14,3 @@ seaborn
 statsmodels
 tqdm
 vermouth>=0.7.2
-pymol>=1.9.0.0
