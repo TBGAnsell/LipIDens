@@ -91,6 +91,17 @@ def compare_sites(path, lip_list):
         except Exception as e:
             print(e)
             exit()
+    elif len(lip_list)==1:
+        try:
+            ref_lipid=lip_list[0]
+            print('\nReference lipid '+ref_lipid)
+            ref_csv=pd.read_csv(f"{path}/Interaction_{ref_lipid}/Dataset_{ref_lipid}/Dataset.csv")
+            BS_ref=ref_csv["Binding Site ID"].unique().tolist()
+            BS_ref.remove(-1)
+            BS_ID_dict={ref_lipid: BS_ref}
+        except Exception as e:
+            print(e)
+            exit()
     else:
         print("Must enter more than one lipid to compare sites between lipid species.")
         exit()
@@ -238,7 +249,8 @@ def plot_site_rank(path, site_dict, data):
 
         ax[0].axhline(y=1, ls=":", c='grey')
         ax[0].set_ylim(data_idx["BS R Squared"].min()-0.02, 1.0)
-        ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45, ha="right")
+        #ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45, ha="right")
+        plt.xticks(rotation=45, ha="right")
 
         sns.despine(top=True, right=True)
         plt.tight_layout()
@@ -501,11 +513,11 @@ for bs_id in np.arange(ref_num_of_sites+1):
                                                                                             )
         if identifier_from_pdb[2] != " ":
             cmd.select(f"BSid{bs_id}_{selected_residue}",
-            f"chain {identifier_from_pdb[2]} and resid {identifier_from_pdb[0]} and (not name C+O+N)")
+            f"{p_name} and chain {identifier_from_pdb[2]} and resid {identifier_from_pdb[0]} and (not name C+O+N)")
             res_sel_list.append(identifier_from_pdb[0])
         else:
             cmd.select(f"BSid{bs_id}_{selected_residue}",
-            f"resid {identifier_from_pdb[0]} and (not name C+O+N)")
+            f"{p_name} and resid {identifier_from_pdb[0]} and (not name C+O+N)")
             res_sel_list.append(identifier_from_pdb[0])
         cmd.show("spheres", f"BSid{bs_id}_{selected_residue}")
         cmd.set("sphere_scale", SCALES[entry_id], selection=f"BSid{bs_id}_{selected_residue}")  
@@ -515,8 +527,8 @@ for bs_id in np.arange(ref_num_of_sites+1):
     # binding site residues for density selection
     res_sel_list="+".join(res_sel_list)
     # generate density around site
-    cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"resid {res_sel_list} around 5")
-    
+    #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"f{p_name} and resid {res_sel_list} around 5")
+    cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"f{p_name} and BSid{bs_id}* and sidechain", carve=6)
     cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
     cmd.hide("cartoon", f"BS_ID_{bs_id}")
     cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
