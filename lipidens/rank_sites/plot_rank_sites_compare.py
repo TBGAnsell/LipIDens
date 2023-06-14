@@ -233,8 +233,7 @@ def plot_site_rank(path, site_dict, data):
     """
     for i in range(0, max(len(v) for v  in site_dict.values())):
         data_idx=data[data["Site_Idx"]==i].reset_index()
-
-
+     
         fig, ax = plt.subplots(2, 1, figsize=(4.2, 4), sharex=True,  gridspec_kw={'height_ratios': [1, 3]})
 
         ax[0].scatter(x=data_idx["Lipid"], y=data_idx["BS R Squared"], c='k')
@@ -255,7 +254,7 @@ def plot_site_rank(path, site_dict, data):
         sns.despine(top=True, right=True)
         plt.tight_layout()
         #plt.show()
-        plt.savefig("{}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx_{}_ref_{}.pdf".format(path, data_idx.at[0, "BS"], data_idx.at[0, "Lipid"]), format='pdf')
+        plt.savefig("{}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx{}_ref_{}_BS{}.pdf".format(path, data_idx.at[0, "Site_Idx"], data_idx.at[0, "Lipid"], data_idx.at[0, "BS"]), format='pdf')
         plt.close()
     print("\nSite comparison complete:", f"{path}/Lipid_compare")
     return
