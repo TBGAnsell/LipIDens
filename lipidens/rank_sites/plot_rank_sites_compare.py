@@ -411,6 +411,7 @@ import os
 import numpy as np
 import re
 from pymol import cmd
+from collections import Counter
 #cmd.reinitialize()
 
 p_name="Protein"
@@ -491,18 +492,13 @@ residue_identifiers = list(residue_identifiers)
 for bs_id in np.arange(ref_num_of_sites+1):
     cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
     res_sel_list=[]
-
-    # load and align top ranked lipid binding poses
-    fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
-    for fle in fle_lst:
-        print(fle[:-4])
-        cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
-        cmd.cealign(target=p_name, mobile=fle[:-4])
+    id_pdb_unq=[]
 
     for entry_id in np.where(binding_site_identifiers == bs_id)[0]:
         selected_residue = residue_list[entry_id]
         selected_residue_rank = residue_rank_set[entry_id]
         identifier_from_pdb = residue_identifiers[selected_residue_rank]
+        id_pdb_unq.append(identifier_from_pdb[2])
         if re.findall("[a-zA-Z]+$", selected_residue)[0] != identifier_from_pdb[1]:
             raise IndexError(
             "The {}th residue in the provided pdb file ({}{}) is different from that in the simulations ({})!".format(
@@ -524,11 +520,22 @@ for bs_id in np.arange(ref_num_of_sites+1):
         cmd.color(f"tmp_{bs_id}", f"BSid{bs_id}_{selected_residue}")
     cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
 
+    # load and align top ranked lipid binding poses
+    fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
+    for fle in fle_lst:
+        print(fle[:-4])
+        cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
+        if len(Counter(id_pdb_unq))==1:
+            chain_unq=Counter(id_pdb_unq).most_common(1)[0][0]
+            cmd.cealign(target=f"{p_name} and chain {chain_unq}", mobile=fle[:-4])
+        else:
+            cmd.cealign(target=p_name, mobile=fle[:-4])
+    
     # binding site residues for density selection
     res_sel_list="+".join(res_sel_list)
     # generate density around site
-    #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"f{p_name} and resid {res_sel_list} around 5")
-    cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"f{p_name} and BSid{bs_id}* and sidechain", carve=6)
+    #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and resid {res_sel_list} around 5")
+    cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
     cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
     cmd.hide("cartoon", f"BS_ID_{bs_id}")
     cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
