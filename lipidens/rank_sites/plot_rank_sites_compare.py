@@ -389,7 +389,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
     """
     
     r_lip=list(BS_ID_dict.keys())[0]
-    r_num_of_sites=len(BS_ID_dict[r_lip])
+    r_num_of_sites=max(BS_ID_dict[r_lip])
 
     if os.path.isfile(f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"):
         ref_lip_csv=f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"
@@ -429,7 +429,7 @@ sigma_factor={sigma_factor}
 
 
 # load residence time data for sites and scale spheres
-colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(ref_num_of_sites)])
+colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(ref_num_of_sites+1)])
 print("Colours", colours, len(colours))
 
 
@@ -488,7 +488,7 @@ residue_rank_set = np.array(residue_rank_set, dtype=int)
 binding_site_identifiers = np.array(binding_site_identifiers, dtype=int)
 residue_identifiers = list(residue_identifiers)
 
-for bs_id in np.arange(ref_num_of_sites):
+for bs_id in np.arange(ref_num_of_sites+1):
     cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
     res_sel_list=[]
     id_pdb_unq=[]
@@ -518,26 +518,28 @@ for bs_id in np.arange(ref_num_of_sites):
         cmd.set("sphere_scale", SCALES[entry_id], selection=f"BSid{bs_id}_{selected_residue}")  
         cmd.color(f"tmp_{bs_id}", f"BSid{bs_id}_{selected_residue}")
     cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
-
-    # load and align top ranked lipid binding poses
-    fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
-    for fle in fle_lst:
-        print(fle[:-4])
-        cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
-        if len(Counter(id_pdb_unq))==1:
-            chain_unq=Counter(id_pdb_unq).most_common(1)[0][0]
-            cmd.cealign(target=f"{p_name} and chain {chain_unq}", mobile=fle[:-4])
-        else:
-            cmd.cealign(target=p_name, mobile=fle[:-4])
     
     # binding site residues for density selection
     res_sel_list="+".join(res_sel_list)
-    # generate density around site
-    #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and resid {res_sel_list} around 5")
-    cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
-    cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
-    cmd.hide("cartoon", f"BS_ID_{bs_id}")
-    cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
+
+    # load and align top ranked lipid binding poses
+    if os.path.isdir(f"{dens_path}/BS_ID_{bs_id}):
+        fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
+            for fle in fle_lst:
+                print(fle[:-4])
+            cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
+            if len(Counter(id_pdb_unq))==1:
+                chain_unq=Counter(id_pdb_unq).most_common(1)[0][0]
+                cmd.cealign(target=f"{p_name} and chain {chain_unq}", mobile=fle[:-4])
+            else:
+                cmd.cealign(target=p_name, mobile=fle[:-4])
+    
+        # generate density around site
+        #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and resid {res_sel_list} around 5")
+        cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
+        cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
+        cmd.hide("cartoon", f"BS_ID_{bs_id}")
+        cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
 cmd.center(p_name)
 
 # save session
