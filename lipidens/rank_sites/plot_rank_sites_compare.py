@@ -389,7 +389,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
     """
     
     r_lip=list(BS_ID_dict.keys())[0]
-    r_num_of_sites=max(BS_ID_dict[r_lip])
+    r_num_of_sites=len(BS_ID_dict[r_lip])
 
     if os.path.isfile(f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"):
         ref_lip_csv=f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"
@@ -429,7 +429,7 @@ sigma_factor={sigma_factor}
 
 
 # load residence time data for sites and scale spheres
-colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(ref_num_of_sites+1)])
+colours= np.array([np.random.choice(np.arange(256, dtype=float), size=3) for dummy in range(ref_num_of_sites)])
 print("Colours", colours, len(colours))
 
 
@@ -488,7 +488,7 @@ residue_rank_set = np.array(residue_rank_set, dtype=int)
 binding_site_identifiers = np.array(binding_site_identifiers, dtype=int)
 residue_identifiers = list(residue_identifiers)
 
-for bs_id in np.arange(ref_num_of_sites+1):
+for bs_id in np.arange(ref_num_of_sites):
     cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
     res_sel_list=[]
     id_pdb_unq=[]
