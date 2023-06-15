@@ -206,7 +206,7 @@ def get_BSstat(path, site_dict):
                     "koff_diff": 0,
                     "BS R squared": 0,
                     "BS Residence Time": 0,
-                    "BS Residence Time boot": 0,
+                    "BS Residence Time boot error": 0,
                     "BS Occupancy": 0})
                 else:
                     print(f"Binding Site ID {site} not recognised. Should be an integer or string 'X' for null site")
@@ -233,29 +233,29 @@ def plot_site_rank(path, site_dict, data):
     """
     for i in range(0, max(len(v) for v  in site_dict.values())):
         data_idx=data[data["Site_Idx"]==i].reset_index()
-     
-        fig, ax = plt.subplots(2, 1, figsize=(4.2, 4), sharex=True,  gridspec_kw={'height_ratios': [1, 3]})
+        if not (data_idx["BS"] =="X").all():
+            fig, ax = plt.subplots(2, 1, figsize=(4.2, 4), sharex=True,  gridspec_kw={'height_ratios': [1, 3]})
 
-        ax[0].scatter(x=data_idx["Lipid"], y=data_idx["BS R Squared"], c='k')
-        ax[0].set_ylabel(r"R$^2$")
-        ax[0].set_xlabel("")
+            ax[0].scatter(x=data_idx["Lipid"], y=data_idx["BS R Squared"], c='k')
+            ax[0].set_ylabel(r"R$^2$")
+            ax[0].set_xlabel("")
 
 
-        #sns.barplot(x="Lipid", y="BS Residence Time", data=data_idx, ax=ax[1], palette="Set2")
-        ax[1].bar(x=data_idx["Lipid"],height=data_idx["BS Residence Time"], yerr=[np.zeros(len(data_idx["BS Residence Time boot error"])), data_idx["BS Residence Time boot error"]], color=sns.color_palette("Set2"))
-        ax[1].set_ylabel(r"Residence Time ($\mu$s)")
-        ax[1].set_xlabel("")
+            #sns.barplot(x="Lipid", y="BS Residence Time", data=data_idx, ax=ax[1], palette="Set2")
+            ax[1].bar(x=data_idx["Lipid"],height=data_idx["BS Residence Time"], yerr=[np.zeros(len(data_idx["BS Residence Time boot error"])), data_idx["BS Residence Time boot error"]], color=sns.color_palette("Set2"))
+            ax[1].set_ylabel(r"Residence Time ($\mu$s)")
+            ax[1].set_xlabel("")
 
-        ax[0].axhline(y=1, ls=":", c='grey')
-        ax[0].set_ylim(data_idx["BS R Squared"].min()-0.02, 1.0)
-        #ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45, ha="right")
-        plt.xticks(rotation=45, ha="right")
+            ax[0].axhline(y=1, ls=":", c='grey')
+            ax[0].set_ylim(data_idx["BS R Squared"].min()-0.02, 1.0)
+            #ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=45, ha="right")
+            plt.xticks(rotation=45, ha="right")
 
-        sns.despine(top=True, right=True)
-        plt.tight_layout()
-        #plt.show()
-        plt.savefig("{}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx{}_ref_{}_BS{}.pdf".format(path, data_idx.at[0, "Site_Idx"], data_idx.at[0, "Lipid"], data_idx.at[0, "BS"]), format='pdf')
-        plt.close()
+            sns.despine(top=True, right=True)
+            plt.tight_layout()
+            #plt.show()
+            plt.savefig("{}/Lipid_compare/Lipid_compare_BSstats_PyLipID_Site_idx{}_ref_{}_BS{}.pdf".format(path, data_idx.at[0, "Site_Idx"], data_idx.at[0, "Lipid"], data_idx.at[0, "BS"]), format='pdf')
+            plt.close()
     print("\nSite comparison complete:", f"{path}/Lipid_compare")
     return
 
@@ -389,7 +389,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
     """
     
     r_lip=list(BS_ID_dict.keys())[0]
-    r_num_of_sites=max(BS_ID_dict[r_lip])
+    r_num_of_sites=max([i for i in BS_ID_dict[r_lip] if isinstance(i, int)])
 
     if os.path.isfile(f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"):
         ref_lip_csv=f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"
@@ -523,10 +523,10 @@ for bs_id in np.arange(ref_num_of_sites+1):
     res_sel_list="+".join(res_sel_list)
 
     # load and align top ranked lipid binding poses
-    if os.path.isdir(f"{dens_path}/BS_ID_{bs_id}):
+    if os.path.isdir(f"{dens_path}/BS_ID_{bs_id}"):
         fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
-            for fle in fle_lst:
-                print(fle[:-4])
+        for fle in fle_lst:
+            print(fle[:-4])
             cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
             if len(Counter(id_pdb_unq))==1:
                 chain_unq=Counter(id_pdb_unq).most_common(1)[0][0]
