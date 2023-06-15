@@ -325,8 +325,8 @@ def backmap_poses(path, protocol_path, BS_ID_dict, save_dir):
     print("Location of lipid poses:", dens_path)
 
     #establish reference lipid path to store comparable poses
-    for site in list(BS_ID_dict.values())[0]:
-        os.makedirs(dens_path+f"/BS_ID_{site}", exist_ok=True)
+    for idx, site in enumerate(list(BS_ID_dict.values())[0]):
+        os.makedirs(dens_path+f"/Site_idx{idx}_BS_ID_{site}", exist_ok=True)
 
     if os.path.isfile(f"{path}/run1/martini_v2.2.itp"):
         ff_type="martini_2-2_charmm36 martini_2-2_charmm36-VS"
@@ -354,8 +354,8 @@ def backmap_poses(path, protocol_path, BS_ID_dict, save_dir):
                     print(f"CG2AT {lipid} pose {site} backmapped")
                     #struc=f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"
                     struc=f"{save_CG_frame_path}/CG2AT/MERGED/merged_cg2at_de_novo.pdb"
-                    shutil.copy(struc, dens_path+"/BS_ID_{}".format(list(BS_ID_dict.values())[0][idx]))
-                    shutil.move(dens_path+"/BS_ID_{}/merged_cg2at_de_novo.pdb".format(list(BS_ID_dict.values())[0][idx]), dens_path+"/BS_ID_{}/BS_ID_{}_{}_merged.pdb".format(list(BS_ID_dict.values())[0][idx], list(BS_ID_dict.values())[0][idx],lipid))
+                    shutil.copy(struc, dens_path+"/Site_idx{}_BS_ID_{}".format(idx, list(BS_ID_dict.values())[0][idx]))
+                    shutil.move(dens_path+"/Site_idx{}_BS_ID_{}/merged_cg2at_de_novo.pdb".format(idx, list(BS_ID_dict.values())[0][idx]), dens_path+"/Site_idx{}_BS_ID_{}/Site_idx{}_BS_ID_{}_{}_merged.pdb".format(idx, list(BS_ID_dict.values())[0][idx], idx, list(BS_ID_dict.values())[0][idx],lipid))
                 else:
                     print(f"CG2AT {lipid} {site} .pdb file not found - check whether backmap was successful")
                     pass
@@ -390,6 +390,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
     
     r_lip=list(BS_ID_dict.keys())[0]
     r_num_of_sites=max([i for i in BS_ID_dict[r_lip] if isinstance(i, int)])
+    r_BS_ids=list(BS_ID_dict[r_lip])
 
     if os.path.isfile(f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"):
         ref_lip_csv=f"{path}/Interaction_{r_lip}/Dataset_{r_lip}/Dataset.csv"
@@ -424,6 +425,7 @@ cmd.color("white", p_name)
 cmd.set("stick_radius", 0.5)
 ref_lip="{r_lip}"
 ref_num_of_sites={r_num_of_sites}
+ref_BS_IDs={r_BS_ids}
 dens_path="{dens_path}"
 sigma_factor={sigma_factor}
 
@@ -488,8 +490,8 @@ residue_rank_set = np.array(residue_rank_set, dtype=int)
 binding_site_identifiers = np.array(binding_site_identifiers, dtype=int)
 residue_identifiers = list(residue_identifiers)
 
-for bs_id in np.arange(ref_num_of_sites+1):
-    cmd.set_color(f"tmp_{bs_id}", list(colours[bs_id]))
+for idx, bs_id in enumerate(ref_BS_IDs):
+    cmd.set_color(f"tmp_{idx}", list(colours[idx]))
     res_sel_list=[]
     id_pdb_unq=[]
 
@@ -516,34 +518,34 @@ for bs_id in np.arange(ref_num_of_sites+1):
             res_sel_list.append(identifier_from_pdb[0])
         cmd.show("spheres", f"BSid{bs_id}_{selected_residue}")
         cmd.set("sphere_scale", SCALES[entry_id], selection=f"BSid{bs_id}_{selected_residue}")  
-        cmd.color(f"tmp_{bs_id}", f"BSid{bs_id}_{selected_residue}")
+        cmd.color(f"tmp_{idx}", f"BSid{bs_id}_{selected_residue}")
     cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
     
     # binding site residues for density selection
     res_sel_list="+".join(res_sel_list)
 
     # load and align top ranked lipid binding poses
-    if os.path.isdir(f"{dens_path}/BS_ID_{bs_id}"):
-        fle_lst=os.listdir(f"{dens_path}/BS_ID_{bs_id}")
+    if os.path.isdir(f"{dens_path}/Site_idx{idx}_BS_ID_{bs_id}"):
+        fle_lst=os.listdir(f"{dens_path}/Site_idx{idx}_BS_ID_{bs_id}")
         for fle in fle_lst:
             print(fle[:-4])
-            cmd.load(f"{dens_path}/BS_ID_{bs_id}/{fle}")
+            cmd.load(f"{dens_path}/Site_idx{idx}_BS_ID_{bs_id}/{fle}")
             if len(Counter(id_pdb_unq))==1:
                 chain_unq=Counter(id_pdb_unq).most_common(1)[0][0]
                 cmd.cealign(target=f"{p_name} and chain {chain_unq}", mobile=fle[:-4])
             else:
                 cmd.cealign(target=p_name, mobile=fle[:-4])
-    
+
         # generate density around site
         #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and resid {res_sel_list} around 5")
-        cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
-        cmd.group(f"BS_ID_{bs_id}", f"BS_ID_{bs_id}*")
-        cmd.hide("cartoon", f"BS_ID_{bs_id}")
-        cmd.color(f"tmp_{bs_id}", f"BS_ID_{bs_id}")       
+        cmd.isomesh(f"Site_idx{idx}_BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
+        cmd.group(f"BS_ID_{bs_id}_Site_idx{idx}", f"Site_idx{idx}*")
+        cmd.hide("cartoon", f"BS_ID_{bs_id}_Site_idx{idx}")
+        cmd.color(f"tmp_{idx}", f"BS_ID_{bs_id}_Site_idx{idx}")       
 cmd.center(p_name)
 
 # save session
-cmd.save(f"{dens_path}/Lipid_poses_density_compare.pse")
+#cmd.save(f"{dens_path}/Lipid_poses_density_compare.pse")
     """
     with open(f"{dens_path}/Lipid_poses_density_compare.py", "w+") as f:
         f.write(t)
