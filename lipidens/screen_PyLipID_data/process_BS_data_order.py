@@ -65,8 +65,14 @@ def plot_screen_data(data, path, lipid):
       "Binding Site Residence Time":r"Residence Time ($\mu$s)" ,
       "Binding Site Occupancy": "Occupancy (%)",
       "Binding Site Surface Area": r"Surface Area ($nm^2$)"}
+    
+    num_IDs=data["Binding Site ID"].max()
+    if num_IDs < 15:
+        x_scale=1
+    else:
+        x_scale=num_IDs/15
 
-    fig, ax = plt.subplots(4, 1, figsize=(4,6))
+    fig, ax = plt.subplots(4, 1, figsize=(4*x_scale,6))
     pal=['#577590', '#90BE6D', '#F8961E', '#F94144']
 
     data["koff_diff"]=data["Binding Site Koff"] - data["Binding Site Koff Bootstrap avg"]
