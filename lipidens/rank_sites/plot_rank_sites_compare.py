@@ -519,7 +519,8 @@ for idx, bs_id in enumerate(ref_BS_IDs):
         cmd.show("spheres", f"BSid{bs_id}_{selected_residue}")
         cmd.set("sphere_scale", SCALES[entry_id], selection=f"BSid{bs_id}_{selected_residue}")  
         cmd.color(f"tmp_{idx}", f"BSid{bs_id}_{selected_residue}")
-    cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
+    if bs_id != "X":
+        cmd.group(f"BSid{bs_id}", f"BSid{bs_id}_*")
     
     # binding site residues for density selection
     res_sel_list="+".join(res_sel_list)
@@ -536,9 +537,12 @@ for idx, bs_id in enumerate(ref_BS_IDs):
             else:
                 cmd.cealign(target=p_name, mobile=fle[:-4])
 
-        # generate density around site
-        #cmd.isomesh(f"BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and resid {res_sel_list} around 5")
-        cmd.isomesh(f"Site_idx{idx}_BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
+        if bs_id != "X":
+            # generate density around site
+            # mesh
+            #cmd.isomesh(f"Site_idx{idx}_BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
+            # surface
+            cmd.isosurface(f"Site_idx{idx}_BS_ID_{bs_id}_map", "Density_map", level=sigma_factor, selection=f"{p_name} and BSid{bs_id}* and sidechain", carve=6)
         cmd.group(f"BS_ID_{bs_id}_Site_idx{idx}", f"Site_idx{idx}*")
         cmd.hide("cartoon", f"BS_ID_{bs_id}_Site_idx{idx}")
         cmd.color(f"tmp_{idx}", f"BS_ID_{bs_id}_Site_idx{idx}")       
