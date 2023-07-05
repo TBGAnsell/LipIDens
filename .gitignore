@@ -120,5 +120,6 @@ cython_debug/
 # Other
 Test*
 LipIDens_data/
+test_data*
 *.pdb
 *.gro
