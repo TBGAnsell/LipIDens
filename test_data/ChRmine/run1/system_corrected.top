@@ -1,0 +1,22 @@
+#include "martini_v2.2.itp"
+#include "martini_v2.0_lipids.itp"
+#include "martini_v2.0_ions.itp"
+
+#include "Protein_A.itp"
+
+[ system ]
+; name
+Martini system from ../7sfk_prot_rotate.pdb
+
+[ molecules ]
+; name        number
+Protein_A 	 3
+DOPE            85
+POPS            42
+POPC            42
+DOPE            86
+POPS            43
+POPC            43
+W           4759
+NA+             217
+CL-             117
