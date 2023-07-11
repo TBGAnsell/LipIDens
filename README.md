@@ -26,6 +26,14 @@ cd LipIDens
 python setup.py install
 ```
 
+### Recomended
+
+Recommended to use dssp version 3 as this is the only current version compatible with martinize2. Check your version using `mkdssp --version`.
+
+```bash
+conda install -c salilab dssp
+```
+
 
 Conda (legacy installation):
 ```bash
