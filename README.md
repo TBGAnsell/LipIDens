@@ -40,7 +40,7 @@ Conda (legacy installation):
 conda create -n LipIDens python=3.9
 pip install -r requirements.txt
 ```
-## Usage
+## Usage:
 
 Detailed steps for the usage and implementation of LidIDens are provided within the accompanying protocols manuscript (see citation below). 
 
