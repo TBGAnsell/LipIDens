@@ -21,7 +21,7 @@
 cd ${9}
 echo ""
 echo "Setting up coarse-grained simulations:"
-for i in `seq 1 ${5}`
+for i in ${5}
 do
     echo ""
     echo "Setting up replicate: ${i}"
@@ -90,20 +90,20 @@ EOF
 
     # EM
     gmx grompp -f ${MDP}/em_steep_1.mdp -c system_ions_corrected.gro -r system_ions_corrected.gro -p system_corrected.top -n index.ndx -o em_steep_1.tpr >& output_files/em_grompp
-    if [[ ! -f em_steep_1.tpr ]]; then echo "Failed to generate em_steep_1.tpr - check system!"; exit 0; fi
+    if [[ ! -f em_steep_1.tpr ]]; then echo "Failed to generate em_steep_1.tpr - check system!"; fi
     gmx mdrun -deffnm em_steep_1 -v >& output_files/em
-    if [[ ! -f em_steep_1.gro ]]; then echo "Energy minimisation failed!"; exit 0; fi
+    if [[ ! -f em_steep_1.gro ]]; then echo "Energy minimisation failed!"; fi
 
     # EQ
     echo "Running equilibration-1"
     gmx grompp -f ${MDP}/eq.1.mdp -c em_steep_1.gro -r em_steep_1.gro -p system_corrected.top -n index.ndx -o eq.1.tpr -maxwarn 1 >& output_files/eq1_grompp
     gmx mdrun -deffnm eq.1 -ntmpi 1 -ntomp ${8} -pin on -pinoffset 0 >& output_files/eq1
-    if [[ ! -f eq.1.gro ]]; then echo "Equilibration-1 failed! Try increasing the box dimensions (using the 'boxsize' variable) or adjusting the protein orientation within the bilayer ('protein_shift' and 'protein_rotate' variables)."; exit 0; fi
+    if [[ ! -f eq.1.gro ]]; then echo "Equilibration-1 failed! Try increasing the box dimensions (using the 'boxsize' variable) or adjusting the protein orientation within the bilayer ('protein_shift' and 'protein_rotate' variables)."; fi
 
     echo "Running equilibration-2"
     gmx grompp -f ${MDP}/eq.2.mdp -c eq.1.gro -r eq.1.gro -p system_corrected.top -n index.ndx -o eq.2.tpr -maxwarn 1 >& output_files/eq2_grompp
     gmx mdrun -deffnm eq.2 -ntmpi 1 -ntomp ${8} -pin on -pinoffset 0 >& output_files/eq2
-    if [[ ! -f eq.2.gro ]]; then echo "Equilibration-2 failed! Try increasing the box dimensions (using the 'boxsize' variable) or adjusting the protein orientation within the bilayer ('protein_shift' and 'protein_rotate' variables)."; exit 0; fi
+    if [[ ! -f eq.2.gro ]]; then echo "Equilibration-2 failed! Try increasing the box dimensions (using the 'boxsize' variable) or adjusting the protein orientation within the bilayer ('protein_shift' and 'protein_rotate' variables)."; fi
 
     # MD
     gmx grompp -f ${MDP}/md.mdp -c eq.2.gro -r eq.2.gro -p system_corrected.top -n index.ndx -o md.tpr -maxwarn 1 >& output_files/md_grompp

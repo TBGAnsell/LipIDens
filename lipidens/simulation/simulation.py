@@ -7,6 +7,7 @@ import shutil
 import sys
 import urllib.request
 import zipfile
+import numpy as np
 
 ###############################
 ### Setup of CG simulations ###
@@ -31,7 +32,7 @@ def get_py_paths(protocol_path):
         path to martinize
     """
     python3_path=subprocess.check_output(['{}/simulation/get_paths.sh'.format(protocol_path), 'python']).decode(sys.stdout.encoding).strip()
-    dssp_path=subprocess.check_output(['{}/simulation/get_paths.sh'.format(protocol_path), 'dssp']).decode(sys.stdout.encoding).strip()
+    dssp_path=subprocess.check_output(['{}/simulation/get_paths.sh'.format(protocol_path), 'mkdssp']).decode(sys.stdout.encoding).strip()
     martinize2_path=subprocess.check_output(['{}/simulation/get_paths.sh'.format(protocol_path), 'martinize2']).decode(sys.stdout.encoding).strip()
 
     return python3_path, dssp_path, martinize2_path
@@ -169,7 +170,23 @@ def run_CG(protocol_path, protein_AT_full, protein_shift, bilayer, boxsize, repl
         ring lipids around/within the protein     
     """
     protein_AT_full=os.path.join(os.getcwd(), protein_AT_full)
-    subprocess.check_call(["{}/simulation/CG_simulation_setup.sh".format(protocol_path), protein_AT_full, str(protein_shift), bilayer, boxsize, str(replicates), python3_path, dssp_path, str(n_cores), path, str(CG_simulation_time), martinize2_path, str(forcefield),str(martini_maxwarn), ring_lipids])
+    repstr=np.arange(1, replicates+1)
+    repstr=' '.join(map(str, repstr))
+    subprocess.check_call(["{}/simulation/CG_simulation_setup.sh".format(protocol_path), protein_AT_full, str(protein_shift), bilayer, boxsize, repstr, python3_path, dssp_path, str(n_cores), path, str(CG_simulation_time), martinize2_path, str(forcefield),str(martini_maxwarn), ring_lipids])
+    for i in range(1, replicates+1):
+        print(f"\n After initial setup attempt for run{i}:")
+        if os.path.isfile(f"{path}/run{i}/protein_cg.gro"):
+            print("\nmartinize (coarse-graining) was successful")
+            if not os.path.isfile(f"{path}/run{i}/md.tpr"):
+                print(f"run{i}/md.tpr not generated - retrying replicate simulation setup")
+                subprocess.check_call(["{}/simulation/CG_simulation_setup.sh".format(protocol_path), protein_AT_full, str(protein_shift), bilayer, boxsize, str(i), python3_path, dssp_path, str(n_cores), path, str(CG_simulation_time), martinize2_path, str(forcefield),str(martini_maxwarn), ring_lipids])
+                if not os.path.isfile(f"{path}/run{i}/md.tpr"):
+                    print(f"\nsecond setup attempt for run{i} was not successful, please check the outputs")
+                
+        else:
+            print(f"\nmartinize2 (coarse-graining) was not successful - please check the outputs for run{i}")
+            print("\nMost likely there is an issue with your dssp path or version")
+
 
 def trjconv_CG(protocol_path, stride, replicates, path):
     """
