@@ -19,14 +19,14 @@ LipIDens aims to guide the user from 'lipid-like' to 'lipid-site' to assist memb
 
 LipIDens requires a python3 environment (>=3.9 recommended). 
 
-LipIDens installation from the GitHub repository:
+####LipIDens installation from the GitHub repository:
 ```bash
 git clone https://github.com/TBGAnsell/LipIDens
 cd LipIDens
 python setup.py install
 ```
 
-### Recomended
+#### Recomended
 
 Recommended to use dssp version 3 as this is the only current version compatible with martinize2. Check your version using `mkdssp --version`.
 
@@ -35,7 +35,7 @@ conda install -c salilab dssp
 ```
 
 
-Conda (legacy installation):
+####Conda (legacy installation):
 ```bash
 conda create -n LipIDens python=3.9
 pip install -r requirements.txt
