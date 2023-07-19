@@ -282,7 +282,7 @@ def locate_density_path(path):
         if os.path.isfile(f"{a_name}"):
             protein_AT_full=a_name
         else:
-            print("\n{a_name} not found.")
+            print(f"\n{a_name} not found.")
             exit()
 
     d_name=str(input("Density map file name: "))
@@ -294,7 +294,7 @@ def locate_density_path(path):
         if os.path.isfile(f"{d_name}"):
             density_map=d_name
         else:
-            print("\n{d_name} not found.")
+            print(f"\n{d_name} not found.")
             exit()
 
     sigma_factor=float(input("Sigma factor value to display map at (default: 10): ") or 10)
@@ -400,7 +400,7 @@ def pymol_density_compare(path, protein_AT_full, density_map, sigma_factor, dens
         if os.path.isfile(rlipcsv):
             ref_lip_csv=rlipcsv
         else:
-            print("\n{rlipcsv} not found.")
+            print(f"\n{rlipcsv} not found.")
             exit()
 
 
