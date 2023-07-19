@@ -225,6 +225,28 @@ def CG2AT(protocol_path, protein_AT_full, input_CG_frame, path):
         path
     """
     print("\nRunning CG2AT\n")
+
+    # check file locations for atomistic and CG inputs
+    if os.path.isfile(f"{path}/{protein_AT_full}"):
+        protein_AT_full=f"{path}/{protein_AT_full}"
+    else:
+        print(f"\n{path}/{protein_AT_full} not found.")
+        a_name=str(input("Define absolute path to atomistic protein coordinate file: "))
+        if os.path.isfile(f"{a_name}"):
+            protein_AT_full=a_name
+        else:
+            print(f"\n{a_name} not found.")
+            exit()
+    if os.path.isfile(f"{path}/{input_CG_frame}"):
+        input_CG_frame=f"{path}/{input_CG_frame}"
+    else:
+        print(f"\n{path}/{input_CG_frame} not found.")
+        c_name=str(input("Define absolute path to CG input frame: "))
+        if os.path.isfile(f"{c_name}"):
+            input_CG_frame=c_name
+        else:
+            print(f"\n{c_name} not found.")
+            exit()
     subprocess.check_call(["{}/simulation/run_CG2AT.sh".format(protocol_path), protein_AT_full, input_CG_frame, path])
 
 
