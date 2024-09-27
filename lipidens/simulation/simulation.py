@@ -70,10 +70,10 @@ def fetch_CG_itp(forcefield, path):
     if forcefield in ["martini_v2.0", "martini_v2.1", "martini_v2.2"]:
         urllib.request.urlretrieve("https://cgmartini-library.s3.ca-central-1.amazonaws.com/1_Downloads/ff_parameters/martini2/particle-definitions/{}.itp".format(forcefield), "{}/itp_files/{}.itp".format(path, forcefield))
         urllib.request.urlretrieve("http://cgmartini.nl/images/parameters/lipids/Collections/martini_v2.0_lipids_all_201506.itp", "{}/itp_files/martini_v2.0_lipids.itp".format(path))
-        urllib.request.urlretrieve("http://cgmartini.nl/images/parameters/ITP/martini_v2.0_ions.itp", "{}/itp_files/martini_v2.0_ions.itp".format(path))
+        urllib.request.urlretrieve("https://cgmartini-library.s3.ca-central-1.amazonaws.com/1_Downloads/ff_parameters/martini2/ions/martini_v2.0_ions.itp", "{}/itp_files/martini_v2.0_ions.itp".format(path))
 
     elif forcefield in ["martini_v3.0.0"]:
-        urllib.request.urlretrieve("http://cgmartini.nl/images/martini_v300.zip", "{}/itp_files/martini_3.0.zip".format(path))
+        urllib.request.urlretrieve("https://cgmartini-library.s3.ca-central-1.amazonaws.com/1_Downloads/ff_parameters/martini3/martini_v300.zip", "{}/itp_files/martini_3.0.zip".format(path))
         with zipfile.ZipFile("{}/itp_files/martini_3.0.zip".format(path), 'r') as zip_dir:
             zip_dir.extractall("{}/itp_files/".format(path))
 
