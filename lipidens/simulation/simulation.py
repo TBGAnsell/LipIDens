@@ -69,7 +69,8 @@ def fetch_CG_itp(forcefield, path):
     """
     if forcefield in ["martini_v2.0", "martini_v2.1", "martini_v2.2"]:
         urllib.request.urlretrieve("https://cgmartini-library.s3.ca-central-1.amazonaws.com/1_Downloads/ff_parameters/martini2/particle-definitions/{}.itp".format(forcefield), "{}/itp_files/{}.itp".format(path, forcefield))
-        urllib.request.urlretrieve("http://cgmartini.nl/images/parameters/lipids/Collections/martini_v2.0_lipids_all_201506.itp", "{}/itp_files/martini_v2.0_lipids.itp".format(path))
+        #urllib.request.urlretrieve("http://cgmartini.nl/images/parameters/lipids/Collections/martini_v2.0_lipids_all_201506.itp", "{}/itp_files/martini_v2.0_lipids.itp".format(path))
+        shutil.copy("{}/simulation/martini_v2.0_lipids_all_201506.it".format(protocol_path),"{}/itp_files/martini_v2.0_lipids.itp".format(path)))
         urllib.request.urlretrieve("https://cgmartini-library.s3.ca-central-1.amazonaws.com/1_Downloads/ff_parameters/martini2/ions/martini_v2.0_ions.itp", "{}/itp_files/martini_v2.0_ions.itp".format(path))
 
     elif forcefield in ["martini_v3.0.0"]:
