@@ -118,7 +118,7 @@ dmypy.json
 cython_debug/
 
 # Other
-Test*
+/Test*
 LipIDens_data/
 test_data*
 *.pdb

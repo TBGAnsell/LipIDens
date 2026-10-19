@@ -336,6 +336,10 @@ def system_setup_AT(protocol_path, path, model_type):
         else:
             print("CG2AT .top file not found - check whether CG2AT was successful")
             exit()
+        # Force field folders: the topology may include them relative to the replicate directories, e.g. cg2at-lite's
+        # "../FINAL/charmm36-cg2at.ff/forcefield.itp"
+        for ff_dir in [d for d in os.listdir("{}/CG2AT/FINAL".format(path)) if d.endswith(".ff")]:
+            shutil.copytree("{}/CG2AT/FINAL/{}".format(path, ff_dir), "{}/FINAL/{}".format(AT_path, ff_dir), dirs_exist_ok=True)
     else:
         print("CG2AT directory not found - was CG2AT successful")
         exit()
