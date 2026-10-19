@@ -123,3 +123,4 @@ LipIDens_data/
 test_data*
 *.pdb
 *.gro
+.DS_Store
