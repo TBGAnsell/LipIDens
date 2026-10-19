@@ -30,7 +30,7 @@ do
 
     MDP=../mdp_files
     simtime=$((${9}*50000000))
-    sed -i "s/XXX/${simtime%.*}/g" ${MDP}/md.mdp
+    sed -i.bak "s/XXX/${simtime%.*}/g" ${MDP}/md.mdp && rm -f ${MDP}/md.mdp.bak
 
     # Change defaut lincs_iter and lincs_order params if CHOL with virtual sites is present in the membrane
     if [[ ${3} == *"CHOL"* ]] && [ ${i} == 1 ]; then lin=$'lincs_iter   =     2 \nlincs_order   =     12' ; echo "$lin" >> ${MDP}/md.mdp ; fi
@@ -53,7 +53,9 @@ do
         ${6} ../python_files/insane_mod.py -f protein_cg.gro -o system.gro  -pbc square -box ${4} -center -dm ${2} ${3} -sol W -p tmp.top
     fi
 
-    sed -i '2d' system.top
+    # replace martinize2's force field include with LipIDens' header (matched by content: its line differs between
+    # martinize2 versions)
+    grep -v '^#include "martini.itp"' system.top > out && mv out system.top
     cat ../itp_files/top_header.txt system.top >out && mv out system.top
     echo "" >> system.top
 

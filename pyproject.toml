@@ -4,27 +4,55 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lipidens"
-version = "1.1.0"
+dynamic = ["version"]
 description = "Simulation-assisted interpretation of lipid densities in cryo-EM structures"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = { file = "LICENSE.txt" }
-
 authors = [
   { name = "T. Bertie Ansell et al." }
 ]
-
-dependencies = [
-  "numpy",
-  "pandas",
-  "matplotlib",
-  "MDAnalysis",
-  "vermouth",
-  "mdtraj",
-  "pylipid"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "matplotlib>=3.5",
+  "seaborn>=0.12",
+  "mdtraj>=1.9.7",
+  "pylipid>=1.6.0",
+  # provides the martinize2 command used to build coarse-grained proteins
+  "vermouth>=0.7.2",
+]
+
+[project.scripts]
+lipidens = "lipidens.master_run:main"
 
 [project.urls]
 Homepage = "https://github.com/pstansfeld/LipIDens"
 Source = "https://github.com/pstansfeld/LipIDens"
 Publication = "https://doi.org/10.1038/s41467-023-43392-y"
+
+[tool.setuptools.dynamic]
+version = { attr = "lipidens._version.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["lipidens*"]
+
+[tool.setuptools.package-data]
+# workflow scripts, GROMACS parameter files and force field files, located at run time from the package directory
+lipidens = [
+  "*/*.sh",
+  "*/*.itp",
+  "simulation/mdp_files/*.mdp",
+  "simulation/mdp_files/long_mdps/*.mdp",
+  "simulation/mdp_files_AT/*.mdp",
+  "simulation/python_files/*.py",
+]

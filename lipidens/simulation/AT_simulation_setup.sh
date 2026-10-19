@@ -18,7 +18,7 @@ do
 
     MDP=../mdp_files_AT
     simtime=$((${3}*500000))
-    sed -i "s/XXX/${simtime%.*}/g" ${MDP}/md*.mdp
+    for mdp in ${MDP}/md*.mdp; do sed -i.bak "s/XXX/${simtime%.*}/g" ${mdp} && rm -f ${mdp}.bak; done
 
     # cp itp and top files to the dir
     cp ../itp_files_AT/*.itp .

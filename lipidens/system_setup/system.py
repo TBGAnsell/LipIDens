@@ -108,7 +108,7 @@ def param_check(input_dict, step_str):
                     var=[float(v) for v in var]
                 elif input_dict[id][3] =="bool":
                     var=input("Change {} to: ".format(input_dict[id][0]))
-                    while var != "True" or "False":
+                    while var not in ("True", "False"):
                         var=input("Must enter 'True' or 'False': ")
                     if var=="True":
                         var=bool(1)

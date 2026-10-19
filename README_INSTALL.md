@@ -1,6 +1,6 @@
 ## Installation
 
-LipIDens requires **Python ≥ 3.9**.
+LipIDens requires **Python ≥ 3.11**.
 
 Clone and install with pip:
 
@@ -16,5 +16,6 @@ For development (editable install):
 pip install -e .
 ```
 
-LipIDens provides workflow scripts and analysis tools.
+Either installs the `lipidens` command, which runs the protocol interactively, together with the workflow scripts and
+parameter files it uses. GROMACS, pdb2pqr and cg2at-lite (or CG2AT) are installed separately: see README.md.
 **MD simulations (e.g. GROMACS) must be run separately by the user.**

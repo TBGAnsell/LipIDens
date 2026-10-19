@@ -74,7 +74,7 @@ def compare_sites(path, lip_list):
                     df=pd.DataFrame({f"{ref_lipid}": ref_site,
                                     f"{lipid}": target_max_sites})
 
-                    tmp_df=tmp_df.append(df, ignore_index=True)
+                    tmp_df=pd.concat([tmp_df, df], ignore_index=True)
                 match_sites=pd.concat([match_sites, tmp_df], axis=1)
 
             match_sites=match_sites.loc[:,~match_sites.columns.duplicated()]
@@ -188,8 +188,7 @@ def get_BSstat(path, site_dict):
             interactions_csv=pd.read_csv(f"{path}/Interaction_{lipid}/Dataset_{lipid}/Dataset.csv")
             for idx, site in enumerate(site_dict[lipid]):
                 if isinstance(site, int):
-                    site_csv=interactions_csv[interactions_csv["Binding Site ID"] == site]
-                    #site_csv.loc[:,"koff_diff"]=site_csv.loc[:,"Binding Site Koff"] - site_csv.loc[:,"Binding Site Koff Bootstrap avg"]
+                    site_csv=interactions_csv[interactions_csv["Binding Site ID"] == site].copy()
                     site_csv["koff_diff"]=site_csv["Binding Site Koff"] - site_csv["Binding Site Koff Bootstrap avg"]
                     df=pd.DataFrame({"Lipid": lipid,
                         "Site_Idx": [idx],
@@ -204,14 +203,14 @@ def get_BSstat(path, site_dict):
                         "Site_Idx": [idx],
                         "BS": site,
                     "koff_diff": 0,
-                    "BS R squared": 0,
+                    "BS R Squared": 0,
                     "BS Residence Time": 0,
                     "BS Residence Time boot error": 0,
                     "BS Occupancy": 0})
                 else:
                     print(f"Binding Site ID {site} not recognised. Should be an integer or string 'X' for null site")
                     exit()
-                data=data.append(df, ignore_index=True)
+                data=pd.concat([data, df], ignore_index=True)
         except Exception as e:
             print(e)
             pass
@@ -242,7 +241,10 @@ def plot_site_rank(path, site_dict, data):
 
 
             #sns.barplot(x="Lipid", y="BS Residence Time", data=data_idx, ax=ax[1], palette="Set2")
-            ax[1].bar(x=data_idx["Lipid"],height=data_idx["BS Residence Time"], yerr=[np.zeros(len(data_idx["BS Residence Time boot error"])), data_idx["BS Residence Time boot error"]], color=sns.color_palette("Set2"))
+            # error bar from the residence time to the bootstrapped one, below the bar when the bootstrap is lower
+            # (matplotlib does not accept negative error values)
+            boot_error = data_idx["BS Residence Time boot error"].to_numpy(dtype=float)
+            ax[1].bar(x=data_idx["Lipid"],height=data_idx["BS Residence Time"], yerr=[np.clip(-boot_error, 0, None), np.clip(boot_error, 0, None)], color=sns.color_palette("Set2"))
             ax[1].set_ylabel(r"Residence Time ($\mu$s)")
             ax[1].set_xlabel("")
 
@@ -345,8 +347,7 @@ def backmap_poses(path, protocol_path, BS_ID_dict, save_dir):
                 try:
                     subprocess.check_call(["{}/rank_sites/run_CG2AT.sh".format(protocol_path), input_CG_frame, save_CG_frame_path, ff_type])
                 except subprocess.CalledProcessError as e:
-                    print(e.output)
-                    pass
+                    print(f"CG2AT failed for {lipid} site pose {site}: {e}")
 
                 # get direct lipid backmapped pose (before equilibration) and move to directory for comparison
                 #if os.path.isfile(f"{save_CG_frame_path}/CG2AT/{lipid}/{lipid}_merged.pdb"):
