@@ -32,21 +32,44 @@ LipIDens then processes these data to guide structural interpretation.
 
 ## Installation
 
-Python **≥ 3.9** is required.
+Python **≥ 3.11** is required.
 
 ```bash
 mamba create -n lipidens python=3.12 -y
 mamba activate lipidens
-mamba install gromacs gromacswrapper mdanalysis mdtraj pdb2pqr -y
-pip install git+https://github.com/marrink-lab/vermouth-martinize.git#vermouth
-pip install git+https://github.com/pstansfeld/pylipid.git
+mamba install -c conda-forge gromacs pdb2pqr -y
 pip install git+https://github.com/pstansfeld/LipIDens.git
 ```
+
+This installs LipIDens with its Python dependencies, including [PyLipID](https://github.com/pstansfeld/PyLipID) (≥ 1.6)
+and [vermouth](https://github.com/marrink-lab/vermouth-martinize) (`martinize2`).
+
+For the atomistic stages (backmapping lipid poses and setting up atomistic simulations) also install
+[cg2at-lite](https://github.com/pstansfeld/cg2at-lite) (`pip install cg2at-lite`); the original
+[CG2AT](https://github.com/owenvickery/cg2at) is used instead if cg2at-lite is not installed. Comparing poses with
+densities (stage 5) writes a [PyMOL](https://pymol.org) script.
 
 Optional:
 ```bash
 mamba install jupyter -y
 ```
+
+---
+
+## Running LipIDens
+
+Run the protocol interactively, stage by stage:
+
+```bash
+lipidens
+```
+
+(or `python lipidens_master_run.py` from a clone of this repository), or follow the
+[LipIDens workflow notebook](https://github.com/pstansfeld/LipIDens/blob/main/LipIDens.ipynb).
+
+If you write your own scripts that call LipIDens or PyLipID, put the code under `if __name__ == "__main__":`:
+PyLipID calculates in worker processes that re-import the script.
+
 ---
 
 ## Typical Workflow
@@ -63,11 +86,11 @@ A worked example of the full LipIDens protocol is provided in the **[LipIDens wo
 
 ## Dependencies
 
-- Python ≥ 3.9
-- PyLipID
-- MDAnalysis
-- GROMACS (user‑run, not installed by pip)
-- MARTINI force field
+- Python ≥ 3.11
+- PyLipID ≥ 1.6, mdtraj, numpy, pandas, matplotlib, seaborn, vermouth (installed by pip)
+- GROMACS and pdb2pqr (user-installed; simulations are run by the user)
+- cg2at-lite or CG2AT (atomistic stages)
+- MARTINI force field (downloaded by LipIDens)
 
 ---
 
