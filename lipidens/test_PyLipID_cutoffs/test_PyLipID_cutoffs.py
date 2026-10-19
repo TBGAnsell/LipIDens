@@ -186,13 +186,21 @@ def compute_minimum_distance(traj, lipid, fig_dir, nprot, lipid_atoms=None,
         distance contact matrix
     """
     DIST_CONTACT_ALL = []
-    traj_info, _, _ = get_traj_info(traj, lipid, lipid_atoms=lipid_atoms)
+    traj_info, _, _ = get_traj_info(traj, lipid, lipid_atoms=lipid_atoms, nprot=nprot)
+    # all lipid atoms in one array, with the boundaries of each lipid, so that each residue needs a single
+    # md.compute_distances call (rather than one per lipid)
+    lipid_atom_lists = traj_info["lipid_residue_atomid_list"]
+    flat_lipid_atoms = np.concatenate(lipid_atom_lists)
+    lipid_starts = np.cumsum([0] + [len(atoms) for atoms in lipid_atom_lists[:-1]])
     for protein_idx in np.arange(nprot, dtype=int):
         for residue_idx, residue_atom_indices in enumerate(
             traj_info["protein_residue_atomid_list"][protein_idx]):
-            dist_matrix = np.array([np.min(
-                            md.compute_distances(traj, np.array(list(product(residue_atom_indices, lipid_atom_indices)))),
-                            axis=1) for lipid_atom_indices in traj_info["lipid_residue_atomid_list"]])
+            pairs = np.column_stack((np.repeat(residue_atom_indices, len(flat_lipid_atoms)),
+                                     np.tile(flat_lipid_atoms, len(residue_atom_indices))))
+            distances = md.compute_distances(traj, pairs)
+            # minimum over residue atoms, then over the atoms of each lipid: (n_lipids, n_frames)
+            per_lipid_atom = distances.reshape(traj.n_frames, len(residue_atom_indices), len(flat_lipid_atoms)).min(axis=1)
+            dist_matrix = np.minimum.reduceat(per_lipid_atom, lipid_starts, axis=1).T
             # plot distances
             for lipid_idx in np.arange(len(dist_matrix)):
                 if sum(dist_matrix[lipid_idx] < distance_threshold) >= contact_frames:
@@ -274,7 +282,7 @@ def test_cutoffs(cutoff_list, trajfile_list, topfile_list, lipid, lipid_atoms, n
     for cutoffs in cutoff_list:
         print("\n Testing cut-off pair:", cutoffs, "\n")
         li = LipidInteraction(trajfile_list, topfile_list=topfile_list, cutoffs=cutoffs, lipid=lipid,
-                              lipid_atoms=lipid_atoms, nprot=1, timeunit=timeunit,
+                              lipid_atoms=lipid_atoms, nprot=nprot, timeunit=timeunit,
                               save_dir=save_dir, stride=stride)
         li.collect_residue_contacts()
         li.compute_residue_duration()
